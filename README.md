@@ -4,7 +4,7 @@
 
 Clone the repository. 
 ```
-
+git clone https://github.com/leahvelleman/sabelotodo/
 ```
 Inside the new directory, set up and activate a virtual environment.
 ```
@@ -17,7 +17,7 @@ Then, install the project dependencies inside it.
 pip install -r requirements.txt
 ```
 
-## Use
+## Usage
 
 Set up `hello.py` as the default Flask app.
 ```
@@ -28,3 +28,11 @@ Then, run Flask.
 flask run
 ```
 In a web browser, load the URL `http://127.0.0.1:5000/`. A page with "Hello, world!" appears.
+
+## Contributing
+
+To install new dependencies, use `pip` as you would normally. Then, update the requirements file.
+```
+pip freeze > requirements.txt
+```
+To deactivate the virtual environment and resume using your default system Python, use the command `deactivate`.
