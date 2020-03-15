@@ -35,4 +35,4 @@ To install new dependencies, use `pip` as you would normally. Then, update the r
 ```
 pip freeze > requirements.txt
 ```
-To deactivate the virtual environment and resume using your default system Python, use the command `deactivate`.
+To deactivate the virtual environment and resume using your default system Python, use the command `deactivate`. To reactivate it, use `source env/bin/activate`.
