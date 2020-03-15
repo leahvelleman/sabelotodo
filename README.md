@@ -1,5 +1,10 @@
 # sabelotodo
 
+## Prerequisites
+
+For installation, this package requires Python 3.8, a current version of Pip, and an internet connection. The installation commands
+will download the remaining dependencies, which include Flask 1.1.1.
+
 ## Installation
 
 Clone the repository. 
