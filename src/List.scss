@@ -1,0 +1,11 @@
+.List {
+    margin: 1em;
+    box-shadow: 10px 10px 5px 0px rgba(230,227,230,1);
+    padding: 1em;
+
+    &--child {
+            margin: 1em;
+            box-shadow: 2px 2px 1px 0px rgba(230,227,230,1);
+            padding: 1em;
+    }
+}
