@@ -1,0 +1,16 @@
+.Drop-target {
+    height: 200px;
+    width: 200px;
+    border: 2px dotted gray;
+    margin: 1em;
+    display: none;
+  
+    &--hover {
+      opacity: 0.5;
+      background-color: yellow;
+    } 
+
+    &--dragging {
+        display: inline-block;
+    }
+  }

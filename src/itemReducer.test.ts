@@ -1,6 +1,6 @@
 import itemReducer from './itemReducer'
 import {moveItemAction} from './itemActions'
-import {Item} from './interfaces'
+import {ListItem} from './interfaces'
 
 
 const fakeLists = [
@@ -40,10 +40,11 @@ const params = [
 
 params.forEach(({itemId, parentId}) => {
     test('moves an item', () => {
-        const findItem  = (item:Item):boolean => item.id === itemId;
+        const findItem  = (item:ListItem):boolean => item.id === itemId;
         const originalItem = fakeLists.find(findItem)
         const result = itemReducer({items: fakeLists}, moveItemAction(itemId, parentId));
         const updatedItem = result.items.find(findItem)
+        //@ts-ignore
         expect(updatedItem.parent).toEqual(parentId)
         expect(fakeLists.find(findItem)).toEqual(originalItem)
     });

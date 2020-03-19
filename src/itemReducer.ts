@@ -1,8 +1,8 @@
-import {Item, Action} from './interfaces'
+import {ListItem, Action} from './interfaces'
 import { MOVE_ITEM } from './itemActions'
 
 type ItemState = {
-    items: Item[]
+    items: ListItem[]
 }
 
 const itemReducer = (state:ItemState, action:Action): ItemState => {
@@ -10,7 +10,7 @@ const itemReducer = (state:ItemState, action:Action): ItemState => {
         case MOVE_ITEM:
             return ({
                 ...state,
-                items: state.items.map((item:Item) => {
+                items: state.items.map((item:ListItem) => {
                     if(item.id === action.draggedId) {
                         return {...item, parent: action.droppedId}
                     }

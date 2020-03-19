@@ -1,11 +1,25 @@
 .List {
-    margin: 1em;
+    margin: 1em 1em 1em 0;
     box-shadow: 10px 10px 5px 0px rgba(230,227,230,1);
-    padding: 1em;
+    display: flex;
 
     &--child {
-            margin: 1em;
-            box-shadow: 2px 2px 1px 0px rgba(230,227,230,1);
-            padding: 1em;
+        box-shadow: 2px 2px 1px 0px rgba(230,227,230,1);
     }
+
+    ul {
+        padding-left: 0
+    }
+
+    .List-content {
+        padding: 1em 1em 1em 0em;
+    }
+}
+
+.List-dnd-target {
+    min-width: 2em;
+    min-height:2em;
+    background-color: cornflowerblue;
+    display: inline-block;
+    margin-right: 1em;
 }

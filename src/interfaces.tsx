@@ -1,15 +1,10 @@
+import {DragItemTypes} from './Constants'
 
-export interface list {
+export interface ListItem {
     name: string;
     description?: string;
     id: number;
     children?: any[];
-}
-
-export interface Item {
-    name: string;
-    description?: string;
-    id: number;
     parent?: number;
 }
 
@@ -18,5 +13,10 @@ export interface Action {
     id?: number,
     draggedId: number,
     droppedId?: number
+}
+
+export interface DraggedItem {
+    type: DragItemTypes,
+    [key: string]: string | number
 }
 

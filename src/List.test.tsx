@@ -1,6 +1,8 @@
 import React from 'react';
-import { render } from '@testing-library/react';
+import { render, cleanup } from '@testing-library/react';
 import List from './List';
+import { DndProvider } from 'react-dnd'
+import Backend from 'react-dnd-html5-backend';
 
 const fakeList = {
     name: "todo",
@@ -15,14 +17,19 @@ const fakeList = {
     ]
 }
 
+// @ts-ignore
+const FakeProvider = ({children}) => {
+    return <DndProvider backend={Backend}>{children}</DndProvider>
+}
+
 test('test renders a list', () => {
-  const { getByText } = render(<List myList={fakeList} isChild={false} />);
+  const { getByText } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}}/></FakeProvider>);
   const linkElement = getByText(fakeList.name);
   expect(linkElement).toBeInTheDocument();
 });
 
 test('test renders children', () => {
-    const { getByText } = render(<List myList={fakeList} isChild={false} />);
+    const { getByText } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}}/></FakeProvider>);
     const linkElement = getByText(fakeList.children[0].name);
     expect(linkElement).toBeInTheDocument();
-  });
+});
