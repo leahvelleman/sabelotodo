@@ -5,6 +5,8 @@ import './List.scss';
 import {ListItem, Action} from './interfaces'
 import {DragItemTypes} from './Constants'
 import DropTarget from './DropTarget';
+import { doesNotReject } from 'assert';
+import { toggleDoneAction } from './itemActions';
 
 
 interface ListProps {
@@ -40,6 +42,7 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
                 'List': true,
                 'List--child': isChild,
                 'List--dragging': isDragging,
+                'List--done': myList.done,
                 [depthClass]: true
             })} 
             ref={preview}
@@ -57,6 +60,12 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
                         {myList.children && (expanded? '⯆' : '⯈')}
                     </span> 
                     {myList.name}
+                    <input 
+                        type='checkbox' 
+                        onClick={() => dispatch(toggleDoneAction(myList.id))}
+                        data-testid='done-checkbox'
+                        className='List__done-checkbox'
+                    />
                 </h1>
                 </header>
                 <main>
@@ -67,13 +76,13 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
         </div>
         <DropTarget dispatch={dispatch} itemId={myList.id} depth={depth}/>
         {myList.children && expanded && myList.children.map((sublist: ListItem) => {
-                            return <List 
-                                        myList={sublist} 
-                                        isChild={true} 
-                                        key={sublist.id} 
-                                        dispatch={dispatch}
-                                        depth={depth+1}
-                                    />
+            return <List 
+                        myList={sublist} 
+                        isChild={true} 
+                        key={sublist.id} 
+                        dispatch={dispatch}
+                        depth={depth+1}
+                    />
         })}
         </React.Fragment>
     );

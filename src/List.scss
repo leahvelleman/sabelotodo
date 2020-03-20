@@ -17,12 +17,22 @@
             background-color: lighten(cornflowerblue, 10%);
         }
     }
+
+    &--done {
+        h1 {
+            text-decoration: line-through;
+        }
+    }
 }
 
 @for $i from 0 to 10 {
     .List--depth-#{$i} {
         grid-column: #{$i + 1}/-1;
     }
+}
+
+.List__done-checkbox {
+    margin-left: 1em;
 }
 
 .List__expand-arrow {
