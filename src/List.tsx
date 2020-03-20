@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import classSet from 'react-classset';
 import {useDrag, DragObjectWithType} from 'react-dnd';
 import './List.scss';
@@ -21,6 +21,7 @@ export interface DragListItemWithType extends DragObjectWithType {
 
 
 const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, depth=0}) => {
+    const [expanded, setExpanded] = useState(false);
     const [{ isDragging }, drag, preview] = useDrag({
         item: { 
             type: DragItemTypes.LIST,
@@ -47,16 +48,16 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
             <div className="List-dnd-target" ref={drag}></div>
             <div className="List-content">
                 <header className="List-header">
-                    <h1>{myList.name}</h1>
+                 <h1><span className="List__expand-arrow" onClick={() => setExpanded(!expanded)}>{myList.children && (expanded? '⯆' : '⯈')}</span> {myList.name}</h1>
                 </header>
                 <main>
                 </main>
-                
+  
             </div>
             
         </div>
         <DropTarget dispatch={dispatch} itemId={myList.id} depth={depth}/>
-        {myList.children && myList.children.map((sublist: ListItem) => {
+        {myList.children && expanded && myList.children.map((sublist: ListItem) => {
                             return <List 
                                         myList={sublist} 
                                         isChild={true} 

@@ -25,6 +25,16 @@
     }
 }
 
+.List__expand-arrow {
+    padding: .5em .5em .5em 0;
+
+    &:hover {
+        color: grey;
+        cursor: pointer;
+    }
+}
+
+
 
 .List-dnd-target {
     min-width: 2em;

@@ -28,8 +28,16 @@ test('test renders a list', () => {
   expect(linkElement).toBeInTheDocument();
 });
 
-test('test renders children', () => {
-    const { getByText } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}}/></FakeProvider>);
+test('test does not render children by default', () => {
+    const { queryByText } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}}/></FakeProvider>);
+    const linkElement = queryByText(fakeList.children[0].name);
+    expect(linkElement).toBeNull();
+});
+
+test('test renders children when expanded', () => {
+    const { getByText, getByTestId } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}}/></FakeProvider>);
+    const expandButton = getByTestId('list-expanded');
+    expandButton.click()
     const linkElement = getByText(fakeList.children[0].name);
     expect(linkElement).toBeInTheDocument();
 });
