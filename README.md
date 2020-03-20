@@ -2,9 +2,15 @@
 
 ## Prerequisites
 
-For installation, the backend requires Python 3.8, a current version of Pip, Postgresql, and an internet connection. The installation commands will download the remaining dependencies, which include Flask 1.1.1 and SQLAlchemy 1.3.15.
+For installation, the backend requires Python 3.8, a current version of Pip, Postgresql, and an internet connection. 
+The installation commands will download the remaining dependencies, which include Flask 1.1.1 and SQLAlchemy 1.3.15.
 
-Currently, the Postgresql database name is hardwired as `postgres.`
+Currently, the Postgresql database name is hardwired as `postgres`. 
+
+The frontend requires npm; the installation commands will download the remaining dependencies.
+
+### For mac users
+Install fsevents: `npm install fsevents`
 
 ## Installation
 
@@ -21,19 +27,62 @@ source env/bin/activate
 Then, install the project dependencies inside it.
 ```
 pip install -r requirements.txt
+npm install
 ```
 
 ## Usage
 
-Set up `hello.py` as the default Flask app.
-```
-export FLASK_APP=hello.py
-```
-Then, run Flask.
-```
-flask run
-```
-In a web browser, load the URL `http://127.0.0.1:5000/`. A page with "Hello, world!" appears.
+Run `npm run start` to build the react app and start the Flask server (in development mode).
+
+In a web browser, load the URL `http://127.0.0.1:3000/`. A page with a default React app appears.
+
+## Available Scripts
+
+In the project directory, you can run:
+
+### `npm start`
+
+Runs the app in the development mode.<br />
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+
+The page will reload if you make edits.<br />
+You will also see any lint errors in the console.
+
+### `npm run start-prod`
+
+Builds the app for production and runs the app in production mode. Open [http://localhost:5000](http://localhost:5000) to view it in the browser.<br />
+The page will not automatically reload when you make edits.
+
+### `npm test`
+
+Launches the frontend test runner in the interactive watch mode.<br />
+See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+
+### `npm run build`
+
+Builds the app for production to the `build` folder.<br />
+It correctly bundles React in production mode and optimizes the build for the best performance.
+
+The build is minified and the filenames include the hashes.<br />
+Your app is ready to be deployed!
+
+See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+
+### `npm run eject`
+
+**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+
+If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+
+Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+
+You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+
+## Learn More
+
+You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+
+To learn React, check out the [React documentation](https://reactjs.org/).
 
 ## Contributing
 
