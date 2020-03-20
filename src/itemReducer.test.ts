@@ -44,8 +44,8 @@ params.forEach(({itemId, parentId}) => {
     test('moves an item', () => {
         const findItem  = (item:ListItem):boolean => item.id === itemId;
         const originalItem = fakeLists.find(findItem)
-        const result = itemReducer({items: fakeLists}, moveItemAction(itemId, parentId));
-        const updatedItem = result.items.find(findItem)
+        const result = itemReducer(fakeLists, moveItemAction(itemId, parentId));
+        const updatedItem = result.find(findItem)
         //@ts-ignore
         expect(updatedItem.parent).toEqual(parentId)
         expect(fakeLists.find(findItem)).toEqual(originalItem)

@@ -48,7 +48,16 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
             <div className="List-dnd-target" ref={drag}></div>
             <div className="List-content">
                 <header className="List-header">
-                 <h1><span className="List__expand-arrow" onClick={() => setExpanded(!expanded)}>{myList.children && (expanded? '⯆' : '⯈')}</span> {myList.name}</h1>
+                 <h1>
+                    <span 
+                        className="List__expand-arrow" 
+                        onClick={() => setExpanded(!expanded)}
+                        data-testid="list-expanded"
+                    >
+                        {myList.children && (expanded? '⯆' : '⯈')}
+                    </span> 
+                    {myList.name}
+                </h1>
                 </header>
                 <main>
                 </main>

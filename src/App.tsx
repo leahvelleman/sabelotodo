@@ -13,33 +13,39 @@ const fakeLists = [
     name: "todo",
     description: "a todo list",
     id: 0,
+    done: false,
   },
   {
     name: "groceries",
     description: "grocery list",
     id: 1,
+    done: true,
   },
   {
     name: "foo",
     id: 2,
+    done: false,
   },
   {
       name: "another list",
       description: "grocery list",
       id: 3,
-      parent: 0
+      parent: 0,
+      done: false,
   },
   {
       name: "yet more",
       description: "grocery list",
       id: 4,
-      parent: 0
+      parent: 0,
+      done: false,
   },
   {
     name: "yet more2",
     description: "grocery list",
     id: 5,
-    parent: 3
+    parent: 3,
+    done: true,
 },
 ]
 
@@ -80,8 +86,8 @@ const processList = (items: ListItem[]):ListItem[] => {
 
 
 function App() {
-  const [state, dispatch] = useReducer(itemReducer, {items: fakeLists});
-  const listsWithChildren = processList(state.items)
+  const [items, dispatch] = useReducer(itemReducer, fakeLists);
+  const listsWithChildren = processList(items)
 
   return (
     <div className="App">

@@ -1,4 +1,4 @@
-import {DragItemTypes} from './Constants'
+import {DragItemTypes} from './Constants';
 
 export interface ListItem {
     name: string;
@@ -6,6 +6,7 @@ export interface ListItem {
     id: number;
     children?: any[];
     parent?: number;
+    done: boolean;
 }
 
 export interface Action {

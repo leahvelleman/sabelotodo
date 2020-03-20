@@ -8,11 +8,13 @@ const fakeList = {
     name: "todo",
     description: "a todo list",
     id: 0,
+    done: false,
     children: [ 
         {
             name: "another list",
             description: "grocery list",
             id: 3,
+            done: true,
         }
     ]
 }
