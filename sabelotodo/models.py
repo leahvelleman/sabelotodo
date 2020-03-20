@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import relationship
 from sabelotodo.database import Base
 
@@ -9,7 +9,7 @@ class Item(Base):
     # siblings, and in any set of siblings, order numbers must be unique.
 
     __tablename__ = 'items'
-    __table_args__ = (UniqueConstraint('order','parent_id',name='sibling_order'))
+    __table_args__ = (UniqueConstraint('order','parent_id',name='sibling_order'),)
     id = Column(Integer, primary_key=True)
     name = Column(String(256))
     order = Column(Integer, unique=True)
