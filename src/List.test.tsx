@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup } from '@testing-library/react';
+import { render, fireEvent } from '@testing-library/react';
 import List from './List';
 import { DndProvider } from 'react-dnd'
 import Backend from 'react-dnd-html5-backend';
@@ -42,4 +42,22 @@ test('test renders children when expanded', () => {
     expandButton.click()
     const linkElement = getByText(fakeList.children[0].name);
     expect(linkElement).toBeInTheDocument();
+});
+
+test('checkbox is checked if item is done', () => {
+    // @ts-ignore
+    const testItem = {...fakeList, done: true}
+    const listId = testItem.id;
+    const { getByTestId } = render(<FakeProvider><List myList={testItem} isChild={false} dispatch={() => {}} parentIds={[]}/></FakeProvider>);
+    const checkbox = getByTestId(`done-checkbox-${listId}`)
+    expect(checkbox).toHaveAttribute('checked')
+});
+
+test('checkbox is not checked if item is not done', () => {
+    // @ts-ignore
+    const testItem = {...fakeList}
+    const listId = testItem.id;
+    const { getByTestId } = render(<FakeProvider><List myList={testItem} isChild={false} dispatch={() => {}} parentIds={[]}/></FakeProvider>);
+    const checkbox = getByTestId(`done-checkbox-${listId}`)
+    expect(checkbox).not.toHaveAttribute('checked')
 });

@@ -63,8 +63,8 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
                     {myList.name}
                     <input 
                         type='checkbox' 
-                        onClick={() => dispatch(toggleDoneAction(myList.id))}
-                        data-testid='done-checkbox'
+                        onChange={() => dispatch(toggleDoneAction(myList.id))}
+                        data-testid={`done-checkbox-${myList.id}`}
                         className='List__done-checkbox'
                         checked={myList.done}
                     />
