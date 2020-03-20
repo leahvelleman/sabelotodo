@@ -2,8 +2,9 @@
 
 ## Prerequisites
 
-For installation, this package requires Python 3.8, a current version of Pip, and an internet connection. The installation commands
-will download the remaining dependencies, which include Flask 1.1.1.
+For installation, the backend requires Python 3.8, a current version of Pip, Postgresql, and an internet connection. The installation commands will download the remaining dependencies, which include Flask 1.1.1 and SQLAlchemy 1.3.15.
+
+Currently, the Postgresql database name is hardwired as `postgres.`
 
 ## Installation
 
