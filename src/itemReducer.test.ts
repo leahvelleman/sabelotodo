@@ -35,7 +35,9 @@ const fakeLists = [
 const params = [
     {itemId: 3, parentId: 3},
     {itemId: 1, parentId: 2},
-    {itemId: 2, parentId: 3}
+    {itemId: 2, parentId: 3},
+    {itemId: 3, parentId: undefined},
+    {itemId: 2, parentId: 1}
 ]
 
 params.forEach(({itemId, parentId}) => {

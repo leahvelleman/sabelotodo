@@ -1,25 +1,35 @@
+@import 'variables';
+
 .List {
-    margin: 1em 1em 1em 0;
-    box-shadow: 10px 10px 5px 0px rgba(230,227,230,1);
+    box-shadow: 2px 2px 1px 0px rgba(230,227,230,1);
     display: flex;
 
-    &--child {
-        box-shadow: 2px 2px 1px 0px rgba(230,227,230,1);
+    h1 {
+        font-size: 14px;
+        text-transform: uppercase;
+        background-color: inherit;
     }
 
-    ul {
-        padding-left: 0
-    }
+    &--dragging {
+        background-color: rgb(240, 236, 236);
 
-    .List-content {
-        padding: 1em 1em 1em 0em;
+        .List-dnd-target {
+            background-color: lighten(cornflowerblue, 10%);
+        }
     }
 }
+
+@for $i from 0 to 10 {
+    .List--depth-#{$i} {
+        grid-column: #{$i + 1}/-1;
+    }
+}
+
 
 .List-dnd-target {
     min-width: 2em;
     min-height:2em;
-    background-color: cornflowerblue;
+    background-color: $primary;
     display: inline-block;
     margin-right: 1em;
 }

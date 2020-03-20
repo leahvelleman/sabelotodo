@@ -11,6 +11,7 @@ interface ListProps {
     myList: ListItem,
     isChild: boolean,
     dispatch: (arg0:Action) => void,
+    depth?: number,
 }
 
 export interface DragListItemWithType extends DragObjectWithType {
@@ -19,7 +20,7 @@ export interface DragListItemWithType extends DragObjectWithType {
 }
 
 
-const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch}) => {
+const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, depth=0}) => {
     const [{ isDragging }, drag, preview] = useDrag({
         item: { 
             type: DragItemTypes.LIST,
@@ -30,12 +31,15 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch}) =
           isDragging: !!monitor.isDragging(),
         }),
       })
+    const depthClass = `List--depth-${depth}`;
     return (
+        <React.Fragment>
         <div 
             className={classSet({
                 'List': true,
                 'List--child': isChild,
-                'List--dragging': isDragging
+                'List--dragging': isDragging,
+                [depthClass]: true
             })} 
             ref={preview}
             key={myList.id}   
@@ -46,20 +50,22 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch}) =
                     <h1>{myList.name}</h1>
                 </header>
                 <main>
-                    {myList.description &&
-                        <div className="List__description">
-                            {myList.description}
-                        </div>
-                    }
-                    <ul>
-                        {myList.children && myList.children.map((sublist: ListItem) => {
-                            return <List myList={sublist} isChild={true} key={sublist.id} dispatch={dispatch}/>
-                        })}
-                    </ul>
                 </main>
-                <DropTarget dispatch={dispatch} itemId={myList.id}/>
+                
             </div>
+            
         </div>
+        <DropTarget dispatch={dispatch} itemId={myList.id} depth={depth}/>
+        {myList.children && myList.children.map((sublist: ListItem) => {
+                            return <List 
+                                        myList={sublist} 
+                                        isChild={true} 
+                                        key={sublist.id} 
+                                        dispatch={dispatch}
+                                        depth={depth+1}
+                                    />
+        })}
+        </React.Fragment>
     );
 }
 

@@ -10,12 +10,13 @@ import {DragListItemWithType} from './List'
 interface DroptargetProps {
     dispatch: (arg0:Action) => void,
     itemId?: number | undefined,
+    depth?: number,
 }
 
 export const DroptargetTestId = 'droptarget'
 
 
-const Droptarget: React.FunctionComponent<DroptargetProps> = ({dispatch, itemId=undefined}) => {
+const Droptarget: React.FunctionComponent<DroptargetProps> = ({dispatch, itemId=undefined, depth=0}) => {
     const [{isOver, canDrop}, drop] = useDrop({
         accept: DragItemTypes.LIST,
         //@ts-ignore
@@ -34,9 +35,16 @@ const Droptarget: React.FunctionComponent<DroptargetProps> = ({dispatch, itemId=
             className={classSet({
             "Drop-target": true,
             "Drop-target--hover": isOver,
-            "Drop-target--dragging": canDrop
+            "Drop-target--dragging": canDrop,
+            [`Drop-target--depth-${depth}`]: true,
         })}
-         > </div>
+         > 
+            <div className={classSet({
+                "Drop-target__line": true,
+                "Drop-target__line--hover": isOver,
+                "Drop-target__line--dragging": canDrop
+            })}></div>
+         </div>
     );
 }
 
