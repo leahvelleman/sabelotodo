@@ -66,6 +66,7 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
                         onClick={() => dispatch(toggleDoneAction(myList.id))}
                         data-testid='done-checkbox'
                         className='List__done-checkbox'
+                        checked={myList.done}
                     />
                 </h1>
                 </header>
