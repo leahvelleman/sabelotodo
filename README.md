@@ -30,6 +30,25 @@ pip install -r requirements.txt
 npm install
 ```
 
+## Database creation
+
+To instantiate the items table and add an item, run this Python code.
+
+```python
+from sabelotodo.database import init_db, db_session
+from sabelotodo.models import Item
+init_db()
+a = Item("name")
+db_session.add(a)
+db_session.commit()
+```
+
+The Item constructor has additional, optional arguments:
+* order: Int
+* done: Boolean
+* description: String
+* parent_id: Int
+
 ## Usage
 
 Run `npm run start` to build the react app and start the Flask server (in development mode).
