@@ -12,7 +12,7 @@ export interface ListItem {
 export interface Action {
     type:string,
     id?: number,
-    draggedId: number,
+    draggedId?: number,
     droppedId?: number
 }
 

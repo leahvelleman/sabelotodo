@@ -1,5 +1,5 @@
 import {ListItem, Action} from './interfaces'
-import { MOVE_ITEM } from './itemActions'
+import { MOVE_ITEM, TOGGLE_DONE } from './itemActions'
 
 type ItemState = ListItem[]
 
@@ -12,6 +12,13 @@ const itemReducer = (state:ItemState, action:Action): ItemState => {
                     }
                     return item;
                 })
+        case TOGGLE_DONE:
+            return state.map((item:ListItem) => {
+                if(item.id === action.id) {
+                    return {...item, done: !item.done}
+                }
+                return item;
+            })
         default:
             return state;
     }
