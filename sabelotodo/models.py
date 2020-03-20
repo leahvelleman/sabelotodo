@@ -12,7 +12,7 @@ class Item(Base):
     __table_args__ = (UniqueConstraint('order','parent_id',name='sibling_order'),)
     id = Column(Integer, primary_key=True)
     name = Column(String(256))
-    order = Column(Integer, unique=True)
+    order = Column(Integer)
     done = Column(Boolean)
     description = Column(String)
     parent_id = Column(Integer, ForeignKey('items.id'))
