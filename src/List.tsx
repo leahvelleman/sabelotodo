@@ -14,20 +14,21 @@ interface ListProps {
     isChild: boolean,
     dispatch: (arg0:Action) => void,
     depth?: number,
+    parentIds: number[],
 }
 
 export interface DragListItemWithType extends DragObjectWithType {
     id: number,
-    parentId: number,
+    parentId?: number,
 }
 
 
-const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, depth=0}) => {
+const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, depth=0, parentIds}) => {
     const [expanded, setExpanded] = useState(false);
     const [{ isDragging }, drag, preview] = useDrag({
         item: { 
             type: DragItemTypes.LIST,
-            id: myList.id ,
+            id: myList.id,
             parentId: myList.parent,
         } as DragListItemWithType,
         collect: monitor => ({
@@ -70,11 +71,15 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
                 </header>
                 <main>
                 </main>
-  
             </div>
-            
         </div>
-        <DropTarget dispatch={dispatch} itemId={myList.id} depth={depth}/>
+        <DropTarget 
+            dispatch={dispatch} 
+            itemId={myList.id} 
+            depth={depth + 1} 
+            parentIds={parentIds}
+            setExpanded={setExpanded}
+        />
         {myList.children && expanded && myList.children.map((sublist: ListItem) => {
             return <List 
                         myList={sublist} 
@@ -82,6 +87,7 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
                         key={sublist.id} 
                         dispatch={dispatch}
                         depth={depth+1}
+                        parentIds={parentIds.concat([myList.id])}
                     />
         })}
         </React.Fragment>

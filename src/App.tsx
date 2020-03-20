@@ -93,9 +93,9 @@ function App() {
     <div className="App">
       <DndProvider backend={Backend}>
         {listsWithChildren.map((list:ListItem, i) => {
-          return (<List myList={list} isChild={false} dispatch={dispatch} key={i}/>)
+          return (<List myList={list} isChild={false} dispatch={dispatch} key={i} parentIds={[]}/>)
         })}
-        <DropTarget dispatch={dispatch} />
+        <DropTarget dispatch={dispatch} parentIds={[]}/>
       </DndProvider>
     </div>
   );

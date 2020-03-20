@@ -25,19 +25,19 @@ const FakeProvider = ({children}) => {
 }
 
 test('test renders a list', () => {
-  const { getByText } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}}/></FakeProvider>);
+  const { getByText } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}} parentIds={[]}/></FakeProvider>);
   const linkElement = getByText(fakeList.name);
   expect(linkElement).toBeInTheDocument();
 });
 
 test('test does not render children by default', () => {
-    const { queryByText } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}}/></FakeProvider>);
+    const { queryByText } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}} parentIds={[]}/></FakeProvider>);
     const linkElement = queryByText(fakeList.children[0].name);
     expect(linkElement).toBeNull();
 });
 
 test('test renders children when expanded', () => {
-    const { getByText, getByTestId } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}}/></FakeProvider>);
+    const { getByText, getByTestId } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}} parentIds={[]}/></FakeProvider>);
     const expandButton = getByTestId('list-expanded');
     expandButton.click()
     const linkElement = getByText(fakeList.children[0].name);

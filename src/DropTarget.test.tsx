@@ -10,7 +10,7 @@ const FakeProvider = ({children}) => {
 }
 
 test('is hidden when no element is being dragged', () => {
-  const { getByTestId } = render(<FakeProvider><DropTarget dispatch={() => {}}/></FakeProvider>);
+  const { getByTestId } = render(<FakeProvider><DropTarget dispatch={() => {}} depth={0} parentIds={[]}/></FakeProvider>);
   const dropBox = getByTestId(DroptargetTestId);
   expect(dropBox).toBeInTheDocument();
   expect(dropBox).toHaveClass('Drop-target')

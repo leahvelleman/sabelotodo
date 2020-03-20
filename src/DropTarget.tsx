@@ -6,23 +6,33 @@ import { moveItemAction } from './itemActions';
 import './DropTarget.scss';
 import { Action } from './interfaces';
 import {DragListItemWithType} from './List'
+import itemReducer from './itemReducer';
 
 interface DroptargetProps {
     dispatch: (arg0:Action) => void,
     itemId?: number | undefined,
     depth?: number,
+    parentIds: number[],
+    setExpanded?(arg0: boolean): void,
 }
 
 export const DroptargetTestId = 'droptarget'
 
 
-const Droptarget: React.FunctionComponent<DroptargetProps> = ({dispatch, itemId=undefined, depth=0}) => {
+const Droptarget: React.FunctionComponent<DroptargetProps> = ({dispatch, itemId=undefined, depth=0, parentIds, setExpanded}) => {
     const [{isOver, canDrop}, drop] = useDrop({
         accept: DragItemTypes.LIST,
         //@ts-ignore
-        drop: (target):void => dispatch(moveItemAction(target.id, itemId)),
-        
-        canDrop: (target:DragListItemWithType):boolean => target.id !== itemId && target.parentId !== itemId,
+        drop: (target):void => {
+            dispatch(moveItemAction(target.id, itemId))
+            if(setExpanded) {
+                setExpanded(true);
+            }
+        },
+        canDrop: (target:DragListItemWithType):boolean => {
+            const isOwnParent = parentIds.includes(target.id)
+            return target.id !== itemId && target.parentId !== itemId && !isOwnParent
+        },
         collect: monitor => ({
             isOver: !!monitor.isOver(),
             canDrop: monitor.canDrop(),
