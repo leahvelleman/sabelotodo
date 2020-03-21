@@ -1,0 +1,8 @@
+.App {
+  text-align: center;
+  display: grid;
+  grid-template-columns: repeat(10, 2em [col-start]) 1fr 1fr 1fr;
+  grid-auto-rows: auto;
+  grid-row-gap: .5em;
+  margin: 1em;
+}

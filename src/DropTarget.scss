@@ -1,0 +1,31 @@
+@import 'variables';
+
+.Drop-target {
+  &--dragging {
+      display: inline-block;
+  }
+
+  grid-column: 1/-1
+}
+
+@for $i from 1 to 10 {
+  .Drop-target--depth-#{$i} {
+      grid-column: #{$i + 1}/-1;
+  }
+}
+
+.Drop-target__line {
+  width: inherit;
+  // the delay on transition prevents a webkit/react-dnd bug in chrome & safari
+  transition: all .5s ease 50ms;
+  
+
+  &--dragging {
+    margin: .5em 0;
+    border: 1px solid $drop-target;
+  }
+  &--hover {
+    margin: .5em 0;
+    border: 2px solid $drop-target-hover;
+  } 
+}

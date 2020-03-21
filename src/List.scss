@@ -1,0 +1,56 @@
+@import 'variables';
+
+.List {
+    box-shadow: 2px 2px 1px 0px rgba(230,227,230,1);
+    display: flex;
+
+    h1 {
+        font-size: 14px;
+        text-transform: uppercase;
+        background-color: inherit;
+    }
+
+    &--dragging {
+        background-color: rgb(240, 236, 236);
+
+        .List-dnd-target {
+            background-color: lighten($primary, 10%);
+        }
+    }
+
+    &--done {
+        h1 {
+            text-decoration: line-through;
+        }
+    }
+}
+
+@for $i from 0 to 10 {
+    .List--depth-#{$i} {
+        grid-column: #{$i + 1}/-1;
+    }
+}
+
+.List__done-checkbox {
+    margin-left: 1em;
+}
+
+.List__expand-arrow {
+    padding: .5em .5em .5em 0;
+
+    &:hover {
+        color: grey;
+        cursor: pointer;
+    }
+}
+
+
+
+.List-dnd-target {
+    min-width: 2em;
+    min-height:2em;
+    background-color: $primary;
+    display: inline-block;
+    margin-right: 1em;
+    cursor: move;
+}
