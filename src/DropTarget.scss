@@ -1,8 +1,6 @@
 @import 'variables';
 
 .Drop-target {
-  display: none;
-
   &--dragging {
       display: inline-block;
   }
@@ -17,10 +15,16 @@
 }
 
 .Drop-target__line {
-  margin: .5em 0;
-  border: 1px solid $drop-target;
   width: inherit;
+  transition: all .5s ease 50ms;
+  
+
+  &--dragging {
+    margin: .5em 0;
+    border: 1px solid $drop-target;
+  }
   &--hover {
+    margin: .5em 0;
     border: 2px solid $drop-target-hover;
   } 
 }

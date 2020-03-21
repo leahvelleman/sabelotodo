@@ -6,7 +6,7 @@ import { moveItemAction } from './itemActions';
 import './DropTarget.scss';
 import { Action } from './interfaces';
 import {DragListItemWithType} from './List'
-import itemReducer from './itemReducer';
+
 
 interface DroptargetProps {
     dispatch: (arg0:Action) => void,
@@ -44,7 +44,7 @@ const Droptarget: React.FunctionComponent<DroptargetProps> = ({dispatch, itemId=
             data-testid={DroptargetTestId}
             className={classSet({
             "Drop-target": true,
-            "Drop-target--hover": isOver,
+            "Drop-target--hover": canDrop && isOver,
             "Drop-target--dragging": canDrop,
             [`Drop-target--depth-${depth}`]: true,
         })}
