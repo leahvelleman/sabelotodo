@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-For installation, the backend requires Python 3.8, a current version of Pip, Autoenv 1.0.0, Postgresql, and an internet connection. 
+For installation, the backend requires Python 3.8, a current version of Pip, Postgresql, and an internet connection. 
 The installation commands will download the remaining dependencies, which include Flask 1.1.1 and SQLAlchemy 1.3.15.
 
 Currently, the Postgresql database name is hardwired as `postgres`. 
@@ -29,6 +29,17 @@ Then, install the project dependencies inside it.
 pip install -r requirements.txt
 npm install
 ```
+
+## Environment maintenance
+
+To automatically activate the virtual environment when you enter the project directory, first install and set up autoenv *outside* the virtual environment.
+```
+deactivate
+pip install autoenv==1.0.0
+touch .env
+echo "source env/bin/activate" > .env
+```
+Then, add `source \`which activate.sh\`` to your `.bashrc` or other startup file, and rerun that file. Now, when you leave and reenter the directory, the virtual environment should activate automatically.
 
 ## Database creation
 
