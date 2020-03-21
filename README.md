@@ -14,6 +14,8 @@ Install fsevents: `npm install fsevents`
 
 ## Installation
 
+### File setup
+
 Clone the repository. 
 ```
 git clone https://github.com/leahvelleman/sabelotodo/
@@ -29,6 +31,48 @@ Then, install the project dependencies inside it.
 pip install -r requirements.txt
 npm install
 ```
+
+### Autoenv setup
+
+The autoenv tool manages environment variables for the project and
+automatically activates the virtual environment when you enter the project
+directory. Install it *outside* the virtual environment.
+
+```
+deactivate
+pip install autoenv==1.0.0
+```
+
+Then, add ``source `which activate.sh` `` to your .bashrc or other startup
+file, and rerun that file. Now, when you leave and reenter the directory, the
+virtual environment activates automatically. 
+
+### Database setup
+
+The database is managed by Alembic. To create it for the first time, first
+enter the project directory to activate the virtual environment. Then, initialize
+the migrations directory, set up a migration, and upgrade to it.
+```
+python manage.py db init
+python manage.py db migrate
+python manage.py db upgrade
+```
+The database is created at `sabelotodo_dev`, and contains a table of Alembic
+information and the table that will store to-do items for the application.
+```
+~> psql sabelotodo_dev
+psql (12.2)
+Type "help" for help.
+
+sabelotodo_dev=# \dt
+                List of relations
+ Schema |      Name       | Type  |    Owner
+--------+-----------------+-------+--------------
+ public | alembic_version | table | leahvelleman
+ public | items           | table | leahvelleman
+(2 rows)
+```
+
 
 ## Usage
 
