@@ -73,7 +73,6 @@ sabelotodo_dev=# \dt
 (2 rows)
 ```
 
-
 ## Usage
 
 Run `npm run start` to build the react app and start the Flask server (in development mode).
