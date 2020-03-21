@@ -1,29 +1,31 @@
-from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, UniqueConstraint
-from sqlalchemy.orm import relationship
-from sabelotodo.database import Base
+from sabelotodo import db
 
-class Item(Base):
 
-    # A to-do item. Items can form trees, with each storing the id of its
-    # parent if it has one. The order field represents the order among
-    # siblings, and in any set of siblings, order numbers must be unique.
 
-    __tablename__ = 'items'
-    __table_args__ = (UniqueConstraint('order','parent_id',name='sibling_order'),)
-    id = Column(Integer, primary_key=True)
-    name = Column(String(256))
-    order = Column(Integer)
-    done = Column(Boolean)
-    description = Column(String)
-    parent_id = Column(Integer, ForeignKey('items.id'))
+class Item(db.Model):
+    __table_args__ = (db.UniqueConstraint('order', 'parent_id', name='sibling_order'),)
 
-    def __init__(self, name, order=None, 
-            done=False, description="", parent_id=None):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(256), nullable=False)
+    order = db.Column(db.Integer, nullable=False)
+    done = db.Column(db.Boolean, nullable=False)
+    description = db.Column(db.String)
+    start_date = db.Column(db.DateTime)
+    end_date = db.Column(db.DateTime)
+    due_date = db.Column(db.DateTime)
+    parent_id = db.Column(db.Integer, db.ForeignKey('item.id'))
+
+    def __init__(self, name, order, done=False, description=None, 
+            start_date=None, end_date=None, due_date=None, 
+            parent_id=None):
         self.name = name
         self.order = order
         self.done = done
         self.description = description
+        self.start_date = start_date
+        self.end_date = end_date
+        self.due_date = due_date
         self.parent_id = parent_id
 
     def __repr__(self):
-        return '<Item %r>' % (self.name)
+        return '<Item {}>'.format(self.name)
