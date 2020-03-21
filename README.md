@@ -39,7 +39,7 @@ pip install autoenv==1.0.0
 touch .env
 echo "source env/bin/activate" > .env
 ```
-Then, add `source \`which activate.sh\`` to your `.bashrc` or other startup file, and rerun that file. Now, when you leave and reenter the directory, the virtual environment should activate automatically.
+Then, add ``source `which activate.sh` `` to your `.bashrc` or other startup file, and rerun that file. Now, when you leave and reenter the directory, the virtual environment should activate automatically.
 
 ## Database creation
 
