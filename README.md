@@ -5,7 +5,7 @@
 For installation, the backend requires Python 3.8, a current version of Pip, Postgresql, and an internet connection. 
 The installation commands will download the remaining dependencies, which include Flask 1.1.1 and SQLAlchemy 1.3.15.
 
-Currently, the Postgresql database name is hardwired as `postgres`. 
+Currently, the Postgresql database name is hardwired as `sabelotodo_dev`.
 
 The frontend requires npm; the installation commands will download the remaining dependencies.
 
