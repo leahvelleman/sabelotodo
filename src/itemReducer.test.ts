@@ -1,5 +1,5 @@
 import itemReducer from './itemReducer'
-import {moveItemAction, toggleDoneAction} from './itemActions'
+import {moveItemAction, toggleDoneAction, setExpandedAction} from './itemActions'
 import {ListItem} from './interfaces'
 
 
@@ -68,3 +68,26 @@ test('toggles done', () => {
     expect(updatedItem.done).toEqual(!originalItem.done)
     expect(fakeLists.find(findItem)).toEqual(originalItem)
 })
+
+test('sets expanded to true', ()=> {
+  const itemId = 2;
+  const findItem  = (item:ListItem):boolean => item.id === itemId;
+  const originalItem = {...fakeLists.find(findItem)}
+  const result = itemReducer(fakeLists, setExpandedAction(itemId, true));
+  const updatedItem = result.find(findItem)
+  //@ts-ignore
+  expect(updatedItem.expanded).toEqual(true)
+  expect(fakeLists.find(findItem)).toEqual(originalItem)
+});
+
+
+test('sets expanded to false', () => {
+  const itemId = 2;
+  const findItem  = (item:ListItem):boolean => item.id === itemId;
+  const originalItem = {...fakeLists.find(findItem)}
+  const result = itemReducer(fakeLists, setExpandedAction(itemId, false));
+  const updatedItem = result.find(findItem)
+  //@ts-ignore
+  expect(updatedItem.expanded).toEqual(false)
+  expect(fakeLists.find(findItem)).toEqual(originalItem)
+});

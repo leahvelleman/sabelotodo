@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useReducer} from 'react';
 import { render, fireEvent } from '@testing-library/react';
 import List from './List';
 import { DndProvider } from 'react-dnd'
@@ -37,9 +37,7 @@ test('test does not render children by default', () => {
 });
 
 test('test renders children when expanded', () => {
-    const { getByText, getByTestId } = render(<FakeProvider><List myList={fakeList} isChild={false} dispatch={() => {}} parentIds={[]}/></FakeProvider>);
-    const expandButton = getByTestId('list-expanded');
-    expandButton.click()
+    const { getByText, getByTestId } = render(<FakeProvider><List myList={{...fakeList, expanded: true}} isChild={false} dispatch={() => {}} parentIds={[]}/></FakeProvider>);
     const linkElement = getByText(fakeList.children[0].name);
     expect(linkElement).toBeInTheDocument();
 });

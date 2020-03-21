@@ -16,6 +16,7 @@
 
 .Drop-target__line {
   width: inherit;
+  // the delay on transition prevents a webkit/react-dnd bug in chrome & safari
   transition: all .5s ease 50ms;
   
 

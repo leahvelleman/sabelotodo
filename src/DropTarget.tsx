@@ -2,7 +2,7 @@ import React from 'react';
 import classSet from 'react-classset';
 import {useDrop} from 'react-dnd';
 import {DragItemTypes} from './Constants'
-import { moveItemAction } from './itemActions';
+import { moveItemAction, setExpandedAction } from './itemActions';
 import './DropTarget.scss';
 import { Action } from './interfaces';
 import {DragListItemWithType} from './List'
@@ -25,8 +25,8 @@ const Droptarget: React.FunctionComponent<DroptargetProps> = ({dispatch, itemId=
         //@ts-ignore
         drop: (target):void => {
             dispatch(moveItemAction(target.id, itemId))
-            if(setExpanded) {
-                setExpanded(true);
+            if(itemId) {
+                dispatch(setExpandedAction(itemId, true))
             }
         },
         canDrop: (target:DragListItemWithType):boolean => {

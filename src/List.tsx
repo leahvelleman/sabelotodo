@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React from 'react';
 import classSet from 'react-classset';
 import {useDrag, DragObjectWithType} from 'react-dnd';
 import './List.scss';
 import {ListItem, Action} from './interfaces'
 import {DragItemTypes} from './Constants'
 import DropTarget from './DropTarget';
-import { doesNotReject } from 'assert';
-import { toggleDoneAction } from './itemActions';
+import { toggleDoneAction, setExpandedAction } from './itemActions';
 
 
 interface ListProps {
@@ -24,7 +23,6 @@ export interface DragListItemWithType extends DragObjectWithType {
 
 
 const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, depth=0, parentIds}) => {
-    const [expanded, setExpanded] = useState(false);
     const [{ isDragging }, drag, preview] = useDrag({
         item: { 
             type: DragItemTypes.LIST,
@@ -55,10 +53,10 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
                  <h1>
                     <span 
                         className="List__expand-arrow" 
-                        onClick={() => setExpanded(!expanded)}
+                        onClick={() => dispatch(setExpandedAction(myList.id, !myList.expanded))}
                         data-testid="list-expanded"
                     >
-                        {myList.children && (expanded? '⯆' : '⯈')}
+                        {myList.children && (myList.expanded? '⯆' : '⯈')}
                     </span> 
                     {myList.name}
                     <input 
@@ -79,9 +77,8 @@ const List: React.FunctionComponent<ListProps> = ({myList, isChild, dispatch, de
             itemId={myList.id} 
             depth={depth + 1} 
             parentIds={parentIds}
-            setExpanded={setExpanded}
         />
-        {myList.children && expanded && myList.children.map((sublist: ListItem) => {
+        {myList.children && myList.expanded && myList.children.map((sublist: ListItem) => {
             return <List 
                         myList={sublist} 
                         isChild={true} 

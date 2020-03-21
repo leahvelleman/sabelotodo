@@ -16,3 +16,12 @@ export const toggleDoneAction = (id:number): Action => {
         id,
     }
 }
+
+export const SET_EXPANDED = 'SET_EXPANDED';
+export const setExpandedAction = (id: number, expanded:boolean): Action => {
+    return {
+        type: SET_EXPANDED,
+        id,
+        expanded,
+    }
+}

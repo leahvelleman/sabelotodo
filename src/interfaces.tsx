@@ -7,13 +7,15 @@ export interface ListItem {
     children?: any[];
     parent?: number;
     done: boolean;
+    expanded?: boolean;
 }
 
 export interface Action {
     type:string,
     id?: number,
     draggedId?: number,
-    droppedId?: number
+    droppedId?: number,
+    expanded?: boolean,
 }
 
 export interface DraggedItem {
