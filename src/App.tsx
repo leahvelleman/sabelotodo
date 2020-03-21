@@ -1,4 +1,4 @@
-import React, {useReducer} from 'react';
+import React, {useReducer, useMemo} from 'react';
 import './App.scss';
 import List from './List';
 import {ListItem} from './interfaces';
@@ -87,8 +87,8 @@ const processList = (items: ListItem[]):ListItem[] => {
 
 function App() {
   const [items, dispatch] = useReducer(itemReducer, fakeLists);
-  const listsWithChildren = processList(items)
-
+  const listsWithChildren = useMemo(() => processList(items), [items])
+  
   return (
     <div className="App">
       <DndProvider backend={Backend}>
