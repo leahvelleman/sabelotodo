@@ -49,29 +49,15 @@ virtual environment activates automatically.
 
 ### Database setup
 
-The database is managed by Alembic. To create it for the first time, first
-enter the project directory to activate the virtual environment. Then, initialize
-the migrations directory, set up a migration, and upgrade to it.
+The first time you install the project, you must create a database for it.
 ```
-python manage.py db init
-python manage.py db migrate
+createdb sabelotodo_dev
+```
+Now set up the tables using Alembic. 
+```
 python manage.py db upgrade
 ```
-The database is created at `sabelotodo_dev`, and contains a table of Alembic
-information and the table that will store to-do items for the application.
-```
-~> psql sabelotodo_dev
-psql (12.2)
-Type "help" for help.
-
-sabelotodo_dev=# \dt
-                List of relations
- Schema |      Name       | Type  |    Owner
---------+-----------------+-------+--------------
- public | alembic_version | table | leahvelleman
- public | items           | table | leahvelleman
-(2 rows)
-```
+Rerun this last command after changing the models or checking out a new branch.
 
 ## Usage
 
