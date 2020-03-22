@@ -5,7 +5,7 @@
 For installation, the backend requires Python 3.8, a current version of Pip, Postgresql, and an internet connection. 
 The installation commands will download the remaining dependencies, which include Flask 1.1.1 and SQLAlchemy 1.3.15.
 
-Currently, the Postgresql database name is hardwired as `postgres`. 
+Currently, the Postgresql database name is hardwired as `sabelotodo_dev`.
 
 The frontend requires npm; the installation commands will download the remaining dependencies.
 
@@ -13,6 +13,8 @@ The frontend requires npm; the installation commands will download the remaining
 Install fsevents: `npm install fsevents`
 
 ## Installation
+
+### File setup
 
 Clone the repository. 
 ```
@@ -29,6 +31,33 @@ Then, install the project dependencies inside it.
 pip install -r requirements.txt
 npm install
 ```
+
+### Autoenv setup
+
+The autoenv tool manages environment variables for the project and
+automatically activates the virtual environment when you enter the project
+directory. Install it *outside* the virtual environment.
+
+```
+deactivate
+pip install autoenv==1.0.0
+```
+
+Then, add ``source `which activate.sh` `` to your .bashrc or other startup
+file, and rerun that file. Now, when you leave and reenter the directory, the
+virtual environment activates automatically. 
+
+### Database setup
+
+The first time you install the project, you must create a database for it.
+```
+createdb sabelotodo_dev
+```
+Now set up the tables using Alembic. 
+```
+python manage.py db upgrade
+```
+Rerun this last command after changing the models or checking out a new branch.
 
 ## Usage
 
