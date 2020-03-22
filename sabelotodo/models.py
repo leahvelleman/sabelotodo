@@ -29,3 +29,13 @@ class Item(db.Model):
 
     def __repr__(self):
         return '<Item {}>'.format(self.name)
+
+    def to_dict(self):
+        return {'name': self.name,
+                'order': self.order,
+                'done': self.done,
+                'description': self.description,
+                'start_date': self.start_date,
+                'end_date': self.end_date,
+                'due_date': self.due_date,
+                'parent_id': self.parent_id}

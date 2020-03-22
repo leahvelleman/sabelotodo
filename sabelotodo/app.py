@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 import os
 
@@ -12,6 +12,11 @@ db = SQLAlchemy(app)
 @app.route('/')
 def hello():
     return "Hello World!"
+
+@app.route('/item')
+def all_items():
+    return jsonify([i.to_dict() for i in Item.query.all()])
+
 
 if __name__ == '__main__':
     app.run()
