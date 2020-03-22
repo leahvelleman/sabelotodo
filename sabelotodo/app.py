@@ -1,5 +1,6 @@
 from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
+from dataclasses import asdict
 import os
 
 app = Flask(__name__)
@@ -15,8 +16,7 @@ def hello():
 
 @app.route('/item')
 def all_items():
-    return jsonify([i.to_dict() for i in Item.query.all()])
-
+    return jsonify( [asdict(i) for i in Item.query.all()] )
 
 if __name__ == '__main__':
     app.run()
