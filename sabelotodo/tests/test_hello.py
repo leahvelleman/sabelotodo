@@ -61,8 +61,20 @@ def _db(app):
 
     return db
 
+@pytest.fixture(scope='module')
+def item(request, _db):
+    '''
+    Create a table to use for updating in the process of testing direct database access.
+    '''
+    from sabelotodo.models import Item
+    # Create tables
+    _db.create_all()
+    @request.addfinalizer
+    def drop_tables():
+        _db.drop_all()
+    return Item
 
-def test_create_item(db_session):
-    i = Item(name='TestItem', order=0, done=True)
-    db.session.add(i)
-    db.session.commit()
+def test_create_item(_db, item):
+    i = item(name='TestItem', order=0, done=True)
+    _db.session.add(i)
+    _db.session.commit()
