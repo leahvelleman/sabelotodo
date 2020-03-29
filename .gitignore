@@ -2,6 +2,7 @@ __pycache__
 env
 
 .vscode/
+.idea/
 
 # dependencies
 /node_modules
