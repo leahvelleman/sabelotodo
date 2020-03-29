@@ -1,5 +1,5 @@
-from sabelotodo.app import db
 from dataclasses import dataclass
+from . import db
 
 
 @dataclass
