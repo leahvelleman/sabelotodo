@@ -8,7 +8,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = os.environ['SQLALCHEMY_TRACK_MODI
 
 db = SQLAlchemy(app)
 
-from models import Item
 
 @app.route('/')
 def hello():

@@ -1,4 +1,4 @@
-from app import db
+from sabelotodo.app import db
 
 
 class Item(db.Model):
