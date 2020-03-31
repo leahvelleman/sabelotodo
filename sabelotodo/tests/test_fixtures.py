@@ -27,12 +27,14 @@ def database(request):
     pg_port = os.environ.get('DB_PORT')
     pg_user = os.environ.get('DB_USER')
     pg_db = os.environ.get('DB_DATABASE')
+    pg_pass = os.environ.get('DB_PASSWORD')
 
     janitor = DatabaseJanitor(user=pg_user,
                               port=pg_port,
                               host=pg_host,
                               db_name=pg_db,
-                              version=11.7)
+                              version=11.7,
+                              password=pg_pass)
     janitor.init()
 
     @request.addfinalizer
