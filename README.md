@@ -60,12 +60,13 @@ python manage.py db upgrade
 ```
 Rerun this last command after changing the models or checking out a new branch.
 
-For testing, a test database is set up. You will need to set database .env variables:
+For testing, a test database is set up. You will need to set database .env variables. Password can be left out if your database is not password protected.
 ```
 export DB_HOST=localhost
 export DB_PORT=5432
 export DB_USER=<your postgres username>
 export DB_DATABASE=sabelotodo_test
+export DB_PASSWORD=<your db password>
 export TEST_DATABASE_URL=postgresql:///sabelotodo_test
 ```
 
@@ -78,6 +79,10 @@ Do not set the DB_HOST and DB_PORT env variables. Create a superuser as the DB_U
 Run `npm run start` to build the react app and start the Flask server (in development mode).
 
 In a web browser, load the URL `http://127.0.0.1:3000/`. A page with a default React app appears.
+
+### Tests
+Run python tests by `running python -m pytest sabelotodo/`
+Run JavaScript tests using `npm test`. (These tests will run continuously as you change the code.)
 
 ## Available Scripts
 
