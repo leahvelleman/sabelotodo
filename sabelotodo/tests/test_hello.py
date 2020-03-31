@@ -6,7 +6,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from pytest_postgresql.factories import (DatabaseJanitor,
                                          drop_postgresql_database)
-from sabelotodo.models import Item, db
+from sabelotodo.models import db
 
 
 # Retrieve a database connection string from the shell environment
@@ -26,12 +26,12 @@ def database(request):
     '''
     Create a Postgres database for the tests, and drop it when the tests are done.
     '''
-    pg_host = "localhost"
-    pg_port = "5432"
-    pg_user = "postgres"
-    pg_db = "sabelotodo_test"
+    pg_host = os.environ.get('DB_HOST')
+    pg_port = os.environ.get('DB_PORT')
+    pg_user = os.environ.get('DB_USER')
+    pg_db = os.environ.get('DB_DATABASE')
 
-    janitor = DatabaseJanitor(pg_user, pg_host, pg_port, pg_db, 11.7)
+    janitor = DatabaseJanitor(user=pg_user, port=pg_port, host=pg_host, db_name=pg_db, version=11.7)
     janitor.init()
 
     @request.addfinalizer
@@ -67,6 +67,7 @@ def item(request, _db):
     Create a table to use for updating in the process of testing direct database access.
     '''
     from sabelotodo.models import Item
+    
     # Create tables
     _db.create_all()
     @request.addfinalizer
