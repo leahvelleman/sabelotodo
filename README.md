@@ -59,6 +59,18 @@ python manage.py db upgrade
 ```
 Rerun this last command after changing the models or checking out a new branch.
 
+For testing, a test database is set up. You will need to set database .env variables:
+```
+export DB_HOST=localhost
+export DB_PORT=5432
+export DB_USER=<your postgres username>
+export DB_DATABASE=sabelotodo_test
+```
+
+#### Linux
+For testing:
+Do not set the DB_HOST and DB_PORT env variables. Create a superuser as the DB_USER which matches the username of the user that runs the tests.
+
 ## Usage
 
 Run `npm run start` to build the react app and start the Flask server (in development mode).
