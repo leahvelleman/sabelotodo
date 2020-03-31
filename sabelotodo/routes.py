@@ -1,5 +1,5 @@
 from flask import current_app as app
-from .models import db, Item
+from .models import Item
 from flask import Flask, jsonify
 from dataclasses import asdict
 
