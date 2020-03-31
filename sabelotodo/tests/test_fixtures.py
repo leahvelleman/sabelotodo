@@ -68,3 +68,9 @@ def _db(app):
     db.create_all()
 
     return db
+
+
+@pytest.fixture
+def test_client(app):
+    with app.test_client() as client:
+        yield client
