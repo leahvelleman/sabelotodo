@@ -50,7 +50,9 @@ jobs:
         DB_USER: postgres
         DB_PASSWORD: postgres
         DB_DATABASE: sabelotodo_test
-        TEST_DATABASE_URL: postgresql:///sabelotodo_test
+        DB_PORT: ${{ job.services.postgres.ports[5432] }}
+        DB_HOST: localhost
+        TEST_DATABASE_URL: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/sabelotodo_test'
       run: |
         pip install -r requirements-dev.txt
         python -m pytest
