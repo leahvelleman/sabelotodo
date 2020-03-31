@@ -29,6 +29,7 @@ source env/bin/activate
 Then, install the project dependencies inside it.
 ```
 pip install -r requirements.txt
+pip install -r requirements-dev.txt
 npm install
 ```
 
@@ -59,11 +60,32 @@ python manage.py db upgrade
 ```
 Rerun this last command after changing the models or checking out a new branch.
 
+For testing, a test database is set up automatically using environment variables. You will need to set the following variables or add them to your `.env` file. Password can be left out if your database is not password protected. See Linux instructions below.
+```
+export DB_HOST=localhost
+export DB_PORT=5432
+export DB_USER=<your postgres username>
+export DB_DATABASE=sabelotodo_test
+export DB_PASSWORD=<your db password>
+export TEST_DATABASE_URL=postgresql:///sabelotodo_test
+```
+
+#### Linux
+For testing:
+Do not set the DB_HOST and DB_PORT env variables. Create a superuser as the DB_USER which matches the username of the user that runs the tests.
+
 ## Usage
 
 Run `npm run start` to build the react app and start the Flask server (in development mode).
 
 In a web browser, load the URL `http://127.0.0.1:3000/`. A page with a default React app appears.
+
+### Tests
+Run python tests by `running python -m pytest sabelotodo/`
+Run JavaScript tests using `npm test`. (These tests will run continuously as you change the code.)
+
+#### Adding a test fixture
+When adding a fixture for use across multiple files, it must be imported to conftest.py in order to be available.
 
 ## Available Scripts
 
