@@ -1,6 +1,5 @@
-from flask import current_app as app
+from flask import abort, jsonify, current_app as app
 from .models import Item
-from flask import jsonify
 from dataclasses import asdict
 
 
@@ -12,6 +11,15 @@ def hello():
 @app.route('/item')
 def all_items():
     return jsonify([asdict(i) for i in Item.query.all()])
+
+
+@app.route('/item/<itemid>')
+def item_by_id(itemid):
+    if itemid.isnumeric():
+        rv = Item.query.get(itemid)
+        if rv:
+            return asdict(rv)
+    abort(404)
 
 
 if __name__ == '__main__':
