@@ -2,6 +2,7 @@ from flask import Flask, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from dataclasses import asdict
 import os
+from sabelotodo.models import Item
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
@@ -14,9 +15,11 @@ db = SQLAlchemy(app)
 def hello():
     return "Hello World!"
 
+
 @app.route('/item')
 def all_items():
     return jsonify([asdict(i) for i in Item.query.all()])
+
 
 if __name__ == '__main__':
     app.run()

@@ -1,12 +1,7 @@
-import json
 import os
 import pytest
 import sqlalchemy as sa
-from flask import Flask
-from flask_migrate import upgrade
-from flask_sqlalchemy import SQLAlchemy
 from pytest_postgresql.factories import DatabaseJanitor
-from sabelotodo.models import Item
 from sabelotodo import create_app, db
 
 
@@ -33,7 +28,11 @@ def database(request):
     pg_user = os.environ.get('DB_USER')
     pg_db = os.environ.get('DB_DATABASE')
 
-    janitor = DatabaseJanitor(user=pg_user, port=pg_port, host=pg_host, db_name=pg_db, version=11.7)
+    janitor = DatabaseJanitor(user=pg_user,
+                              port=pg_port,
+                              host=pg_host,
+                              db_name=pg_db,
+                              version=11.7)
     janitor.init()
 
     @request.addfinalizer
@@ -65,7 +64,7 @@ def _db(app):
     database connection.
     '''
     db.app = app
-    from sabelotodo.models import Item
+    from sabelotodo.models import Item  # noqa: F401
     db.create_all()
 
     return db

@@ -1,5 +1,5 @@
-import pytest
 from sabelotodo.models import Item
+
 
 def test_create_item(_db):
     """ Verify that database works"""
