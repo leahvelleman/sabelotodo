@@ -60,7 +60,7 @@ python manage.py db upgrade
 ```
 Rerun this last command after changing the models or checking out a new branch.
 
-For testing, a test database is set up. You will need to set database .env variables. Password can be left out if your database is not password protected.
+For testing, a test database is set up automatically using environment variables. You will need to set the following variables or add them to your `.env` file. Password can be left out if your database is not password protected. See Linux instructions below.
 ```
 export DB_HOST=localhost
 export DB_PORT=5432
@@ -83,6 +83,9 @@ In a web browser, load the URL `http://127.0.0.1:3000/`. A page with a default R
 ### Tests
 Run python tests by `running python -m pytest sabelotodo/`
 Run JavaScript tests using `npm test`. (These tests will run continuously as you change the code.)
+
+#### Adding a test fixture
+When adding a fixture for use across multiple files, it must be imported to conftest.py in order to be available.
 
 ## Available Scripts
 
