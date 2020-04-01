@@ -16,8 +16,8 @@ def all_items():
 @app.route('/item/<itemid>')
 def item_by_id(itemid):
     if itemid.isnumeric():
-        rv = Item.query.get(itemid)
-        if rv:
+        return_value = Item.query.get(itemid)
+        if return_value:
             return asdict(rv)
     abort(404)
 
