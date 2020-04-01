@@ -18,7 +18,7 @@ def item_by_id(itemid):
     if itemid.isnumeric():
         return_value = Item.query.get(itemid)
         if return_value:
-            return asdict(rv)
+            return asdict(return_value)
     abort(404)
 
 
