@@ -2,7 +2,8 @@ from dataclasses import dataclass
 from sabelotodo import db
 
 
-@dataclass
+@dataclass(eq=True, order=True) # Support equality and sorting for ease of
+                                # testing.
 class Item(db.Model):
     __tablename__ = 'items'
     __table_args__ = (db.UniqueConstraint('order', 'parent_id', name='sibling_order'),)
