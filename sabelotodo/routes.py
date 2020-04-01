@@ -1,5 +1,5 @@
-from flask import abort, jsonify, current_app as app
-from .models import Item
+from flask import abort, jsonify, Response, current_app as app
+from .models import Item, db
 from dataclasses import asdict
 
 
@@ -13,13 +13,18 @@ def all_items():
     return jsonify([asdict(i) for i in Item.query.all()])
 
 
-@app.route('/item/<itemid>')
-def item_by_id(itemid):
-    if itemid.isnumeric():
-        return_value = Item.query.get(itemid)
-        if return_value:
-            return asdict(return_value)
-    abort(404)
+@app.route('/item/<int:itemid>')
+def get_item_by_id(itemid):
+    item = Item.query.get_or_404(itemid)
+    return asdict(item)
+
+
+@app.route('/item/<int:itemid>', methods=["DELETE"])
+def delete_item_by_id(itemid: str):
+    item = Item.query.get_or_404(itemid)
+    db.session.delete(item)
+    db.session.commit()
+    return Response(status=200)
 
 
 if __name__ == '__main__':
