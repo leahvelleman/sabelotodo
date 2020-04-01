@@ -62,8 +62,9 @@ def app(database):
 @pytest.fixture(scope='function')
 def _db(app, request):
     '''
-    Provide the transactional fixtures with access to the database via a Flask-SQLAlchemy
-    database connection.
+    Provide the transactional fixtures with access to the database via a
+    Flask-SQLAlchemy database connection. `scope='function'` means the tables
+    are dropped after each test.
     '''
     db.app = app
     from sabelotodo.models import Item  # noqa: F401
