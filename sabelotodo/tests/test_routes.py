@@ -73,6 +73,23 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
     assert sorted(Item.query.all()) == sorted(remainder)
 
 
+def test_post_item_route(test_client):
+    """ A POST request to /item creates an item with properties specified by
+    the JSON payload. """
+
+    item_json = {'name': 'a',
+                 'order': 1,
+                 'done': False,
+                 'description': 'Lorem ipsum dolor sit amet',
+                 'start_date': '2020-01-01',
+                 'end_date': '2020-04-01',
+                 'due_date': '2020-08-01'}
+
+    return_value = test_client.post('/item', json=item_json)
+    assert return_value.status_code == 200
+    assert json.loads(return_value.data) == asdict(Item.query.all())
+    
+
 @pytest.mark.parametrize(
         "itemid, method", 
         product([sys.maxsize, "0.5", "-1", "1&garbage", "", "spork"],
