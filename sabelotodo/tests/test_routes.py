@@ -18,8 +18,8 @@ def test_create_item(_db):
 
 
 def test_item_route_with_empty_db(test_client, _db):
-    rv = test_client.get('/item')
-    assert json.loads(rv.data) == []
+    return_value = test_client.get('/item')
+    assert json.loads(return_value.data) == []
 
 
 def test_item_route_with_multiple_items(test_client, _db):
@@ -34,8 +34,8 @@ def test_item_route_with_multiple_items(test_client, _db):
     _db.session.add(k)
     _db.session.commit()
 
-    rv = test_client.get('/item')
-    assert json.loads(rv.data) == [asdict(i) for i in Item.query.all()]
+    return_value = test_client.get('/item')
+    assert json.loads(return_value.data) == [asdict(i) for i in Item.query.all()]
 
 
 def test_itemid_route_with_valid_id(test_client, _db):
@@ -51,8 +51,8 @@ def test_itemid_route_with_valid_id(test_client, _db):
     _db.session.commit()
 
     this_id = j.id
-    rv = test_client.get('/item/%s' % this_id)
-    assert json.loads(rv.data) == asdict(j)
+    return_value = test_client.get('/item/%s' % this_id)
+    assert json.loads(return_value.data) == asdict(j)
 
 
 def test_itemid_route_failures(test_client, _db):
@@ -68,20 +68,20 @@ def test_itemid_route_failures(test_client, _db):
     _db.session.add(k)
     _db.session.commit()
 
-    rv = test_client.get('/item/999')
-    assert rv.status_code == 404
+    return_value = test_client.get('/item/999')
+    assert return_value.status_code == 404
 
-    rv = test_client.get('/item/0.5')
-    assert rv.status_code == 404
+    return_value = test_client.get('/item/0.5')
+    assert return_value.status_code == 404
 
-    rv = test_client.get('/item/-1')
-    assert rv.status_code == 404
+    return_value = test_client.get('/item/-1')
+    assert return_value.status_code == 404
 
-    rv = test_client.get('/item/1&garbage')
-    assert rv.status_code == 404
+    return_value = test_client.get('/item/1&garbage')
+    assert return_value.status_code == 404
 
-    rv = test_client.get('/item/')
-    assert rv.status_code == 404
+    return_value = test_client.get('/item/')
+    assert return_value.status_code == 404
 
-    rv = test_client.get('/item/spork')
-    assert rv.status_code == 404
+    return_value = test_client.get('/item/spork')
+    assert return_value.status_code == 404
