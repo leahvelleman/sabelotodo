@@ -59,15 +59,25 @@ def app(database):
     return app
 
 
-@pytest.fixture(scope='session')
-def _db(app):
+@pytest.fixture(scope='function')
+def _db(app, request):
     '''
-    Provide the transactional fixtures with access to the database via a Flask-SQLAlchemy
-    database connection.
+    Provide the transactional fixtures with access to the database via a
+    Flask-SQLAlchemy database connection. `scope='function'` means the tables
+    are dropped after each test.
     '''
     db.app = app
     from sabelotodo.models import Item  # noqa: F401
     db.create_all()
+    session = db.session
+
+    @request.addfinalizer
+    def clear_data():
+        meta = db.metadata
+        for table in reversed(meta.sorted_tables):
+            print('Clear table %s' % table)
+            session.execute(table.delete())
+        session.commit()
 
     return db
 
