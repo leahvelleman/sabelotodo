@@ -28,11 +28,19 @@ class ItemSchema(ma.SQLAlchemyAutoSchema):
         include_fk = True
 
     # Override these fields so we can tell Marshmallow more about
-    # time format and time zone
+    # time format and time zone. `NaiveDateTime` means we're not 
+    # attempting to store a time zone. The `format` argument means
+    # we expect JSON strings in the format Flask emits by default.
+    # The `timezone` argument prevents off-by-a-few-hours
+    # errors we were otherwise getting -- I'm unclear on why it needs
+    # to be specified, but empirically it works. (lbv)
     start_date = fields.NaiveDateTime(format="rfc",timezone=GMT)
     due_date = fields.NaiveDateTime(format="rfc",timezone=GMT)
     end_date = fields.NaiveDateTime(format="rfc",timezone=GMT)
 
+    # Instruct Marshmallow to actually instantiate an Item object when
+    # it deserializes using this schema instead of just giving us
+    # a dictionary we could use to instantiate one ourselves. 
     @post_load
     def make_item(self, data, **kwargs):
         return Item(**data)

@@ -144,6 +144,8 @@ def test_invalid_itemid(test_client, _db, itemid, method):
          {} # Empty JSON
          ])
 def test_invalid_post(test_client, _db, source_dict):
+    """ The /item POST route fails with a 400 if you give it JSON that fails in
+    various ways to satisfy the ItemSchema schema in models.py. """
 
     items = [Item(name="a", order=0, done=False),
              Item(name="b", order=2, done=True),

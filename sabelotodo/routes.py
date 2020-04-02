@@ -44,6 +44,7 @@ def create_item():
         db.session.add(item)
         db.session.commit()
     except:
+        # TODO: This branch of code is currently untested (lbv)
         db.session.rollback()
         return Response(status=500)
 
