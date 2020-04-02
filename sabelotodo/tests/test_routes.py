@@ -82,7 +82,9 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
              'order': 1, 
              'done': False,
              'description': 'Lorem ipsum dolor sit amet',
-             'start_date': datetime.datetime(2020,1,1,0,0)}
+             'start_date': datetime.datetime(2020,1,1,0,0),
+             'due_date': datetime.datetime(2020,3,1,0,0),
+             'end_date': datetime.datetime(2020,5,1,0,0)}
          ])
 def test_post_item_route_with_valid_input(test_client, _db, source_dict):
     """ A POST request to /item creates an item with properties specified by

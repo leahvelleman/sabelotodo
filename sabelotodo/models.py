@@ -30,5 +30,5 @@ class ItemSchema(ma.SQLAlchemyAutoSchema):
     # Override these fields so we can tell Marshmallow more about
     # time format and time zone
     start_date = fields.NaiveDateTime(format="rfc",timezone=GMT)
-    due_date = fields.DateTime(format="rfc",timezone=GMT)
-    end_date = fields.DateTime(format="rfc",timezone=GMT)
+    due_date = fields.NaiveDateTime(format="rfc",timezone=GMT)
+    end_date = fields.NaiveDateTime(format="rfc",timezone=GMT)
