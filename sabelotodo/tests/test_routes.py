@@ -127,18 +127,18 @@ def test_invalid_itemid(test_client, _db, itemid, method):
     return_value = test_client.open(method=method, path='/item/%s' % itemid)
     assert return_value.status_code == 404
 
-#@pytest.mark.parametrize("source_dict", 
-#        [{'name': 'name too long '*100,
-#             'order': 57,
-#             'done': True},
-#         {'name': 'no order', 
-#             'done': False}
-#         ])
-#def test_invalid_post(test_client, _db, source_dict):
-#    return_value = test_client.post('/item', json=source_dict)
-#
-#    # The request fails with a 400 error.
-#    assert return_value.status.code == 400
-#
-#    # Nothing is added to the database.
-#    assert Item.query.all() == []
+@pytest.mark.parametrize("source_dict", 
+        [{'name': 'name too long '*100,
+             'order': 57,
+             'done': True},
+         {'name': 'no order', 
+             'done': False}
+         ])
+def test_invalid_post(test_client, _db, source_dict):
+    return_value = test_client.post('/item', json=source_dict)
+
+    # The request fails with a 400 error.
+    assert return_value.status.code == 400
+
+    # Nothing is added to the database.
+    assert Item.query.all() == []
