@@ -1,4 +1,5 @@
 from flask import abort, jsonify, request, Response, current_app as app
+from marshmallow import ValidationError
 from .models import Item, ItemSchema, db
 from dataclasses import asdict
 
@@ -31,10 +32,21 @@ def delete_item_by_id(itemid: str):
 @app.route('/item', methods=["POST"])
 def create_item():
     json_data = request.get_json()
-    print(json_data)
-    item = item_schema.load(json_data)
-    db.session.add(item)
-    db.session.commit()
+    if not json_data:
+        return Response(status=400)
+
+    try:
+        item = item_schema.load(json_data)
+    except ValidationError:
+        return Response(status=400)
+
+    try:
+        db.session.add(item)
+        db.session.commit()
+    except:
+        db.session.rollback()
+        return Response(status=500)
+
     return jsonify(item), 200
 
 

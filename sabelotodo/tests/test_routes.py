@@ -131,14 +131,35 @@ def test_invalid_itemid(test_client, _db, itemid, method):
         [{'name': 'name too long '*100,
              'order': 57,
              'done': True},
-         {'name': 'no order', 
-             'done': False}
+         {'name': 'no order number', 
+             'done': False},
+         {'name': 'unstandardized date format', 
+             'order': 12,
+             'done': False,
+             'start_date': 'January 21, 2012'},
+         {'name': 'extraneous fields',
+             'order': 12,
+             'done': False,
+             'spatula': 'albuquerque'},
+         {} # Empty JSON
          ])
 def test_invalid_post(test_client, _db, source_dict):
+
+    items = [Item(name="a", order=0, done=False),
+             Item(name="b", order=2, done=True),
+             Item(name="c", order=1, done=False)]
+
+    _db.session.add_all(items)
+    _db.session.commit()
+
     return_value = test_client.post('/item', json=source_dict)
 
     # The request fails with a 400 error.
-    assert return_value.status.code == 400
+    try:
+        assert return_value.status_code == 400
+    except:
+        print(Item.query.all())
 
     # Nothing is added to the database.
-    assert Item.query.all() == []
+    assert Item.query.all() == items
+
