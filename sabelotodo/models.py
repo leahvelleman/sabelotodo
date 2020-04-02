@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 import datetime
-from marshmallow import fields
+from marshmallow import fields, post_load
 from sabelotodo import db, ma
 
 GMT = timezone=datetime.timezone(datetime.timedelta(hours=0))
@@ -32,3 +32,7 @@ class ItemSchema(ma.SQLAlchemyAutoSchema):
     start_date = fields.NaiveDateTime(format="rfc",timezone=GMT)
     due_date = fields.NaiveDateTime(format="rfc",timezone=GMT)
     end_date = fields.NaiveDateTime(format="rfc",timezone=GMT)
+
+    @post_load
+    def make_item(self, data, **kwargs):
+        return Item(**data)

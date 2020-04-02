@@ -32,7 +32,7 @@ def delete_item_by_id(itemid: str):
 def create_item():
     json_data = request.get_json()
     print(json_data)
-    item = Item(**item_schema.load(json_data))
+    item = item_schema.load(json_data)
     db.session.add(item)
     db.session.commit()
     return jsonify(item), 200
