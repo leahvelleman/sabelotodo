@@ -1,4 +1,5 @@
-import pytest, json, sys
+import pytest, sys, datetime
+from flask import json
 from dataclasses import asdict
 from itertools import product
 
@@ -73,28 +74,45 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
     assert sorted(Item.query.all()) == sorted(remainder)
 
 
-def test_post_item_route(test_client):
+@pytest.mark.parametrize("source_dict", 
+        [{'name': 'a',
+             'order': 57,
+             'done': True},
+         {'name': 'a', 
+             'order': 1, 
+             'done': False,
+             'description': 'Lorem ipsum dolor sit amet',
+             'start_date': datetime.datetime(2020,1,1,0,0),
+             'end_date': datetime.datetime(2020,3,1,0,0),
+             'due_date': datetime.datetime(2020,5,1,0,0)}
+         ])
+def test_post_item_route_with_valid_input(test_client, _db, source_dict):
     """ A POST request to /item creates an item with properties specified by
-    the JSON payload. """
+    the JSON payload. We specify _db as a fixture even though we don't use
+    it so that the database will be torn down after each run. """
 
-    item_json = {'name': 'a',
-                 'order': 1,
-                 'done': False,
-                 'description': 'Lorem ipsum dolor sit amet',
-                 'start_date': '2020-01-01',
-                 'end_date': '2020-04-01',
-                 'due_date': '2020-08-01'}
+    return_value = test_client.post('/item', json=source_dict)
+    returned_data = return_value.data
+    created_item = Item.query.first()
 
-    return_value = test_client.post('/item', json=item_json)
+    # The request succeeds.
     assert return_value.status_code == 200
-    assert json.loads(return_value.data) == asdict(Item.query.all())
-    
 
+    # The returned dictionary matches the created item in the database
+    # modulo the effects of json encoding.
+    assert json.loads(returned_data) == json.loads(json.dumps(created_item))
+
+    # The created item we see in the database has attributes that are a
+    # superset of the originally specified ones (they should go beyond it, for
+    # instance, in containing an ID, and in containing default values for other
+    # things that weren't specified).
+    assert asdict(created_item).items() >= source_dict.items()
+    
 @pytest.mark.parametrize(
         "itemid, method", 
         product([sys.maxsize, "0.5", "-1", "1&garbage", "", "spork"],
                 ["GET", "DELETE"]))
-def test_itemid_route_failures(test_client, _db, itemid, method):
+def test_invalid_itemid(test_client, _db, itemid, method):
     """ The /item/<id> route fails with a 404 for IDs that don't convert to
     integers or that don't correspond to an item in the database, and
     does so for any of the methods we support. """
@@ -108,3 +126,19 @@ def test_itemid_route_failures(test_client, _db, itemid, method):
 
     return_value = test_client.open(method=method, path='/item/%s' % itemid)
     assert return_value.status_code == 404
+
+#@pytest.mark.parametrize("source_dict", 
+#        [{'name': 'name too long '*100,
+#             'order': 57,
+#             'done': True},
+#         {'name': 'no order', 
+#             'done': False}
+#         ])
+#def test_invalid_post(test_client, _db, source_dict):
+#    return_value = test_client.post('/item', json=source_dict)
+#
+#    # The request fails with a 400 error.
+#    assert return_value.status.code == 400
+#
+#    # Nothing is added to the database.
+#    assert Item.query.all() == []
