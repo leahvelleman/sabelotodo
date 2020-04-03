@@ -1,10 +1,11 @@
-from flask import abort, jsonify, request, Response, current_app as app
+from dataclasses import asdict
+from flask import jsonify, request, Response, current_app as app
 from marshmallow import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 from .models import Item, ItemSchema, db
-from dataclasses import asdict
 
 item_schema = ItemSchema()
+
 
 @app.route('/')
 def hello():
@@ -49,10 +50,9 @@ def create_item():
         db.session.rollback()
         return "Database error", 500
 
-    return jsonify(item), 200   # TODO: This should use item_schema.dump,
-                                # but currently this leads to small
-                                # discrepancies in date string format that
-                                # break tests. (lbv 2020-4-2)
+    return jsonify(item), 200
+    # TODO: This should use item_schema.dump, but currently this leads to small
+    # discrepancies in date string format that break tests. (lbv 2020-4-2)
 
 
 if __name__ == '__main__':

@@ -6,7 +6,6 @@ from itertools import product
 from sabelotodo.models import Item
 
 
-
 def test_create_item(_db):
     """ Verify that database works"""
     name = 'TestItem'
@@ -36,7 +35,8 @@ def test_item_route_with_multiple_items(test_client, _db):
     _db.session.commit()
 
     return_value = test_client.get('/item')
-    assert json.loads(return_value.data) == [asdict(i) for i in Item.query.all()]
+    assert json.loads(return_value.data) \
+        == [asdict(i) for i in Item.query.all()]
 
 
 @pytest.mark.parametrize("idx", [0, 1, 2])
@@ -83,18 +83,18 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
     assert get_attempt.status_code == 404
 
 
-@pytest.mark.parametrize("source_dict", 
-        [{'name': 'a',
-             'order': 57,
-             'done': True},
-         {'name': 'a', 
-             'order': 1, 
-             'done': False,
-             'description': 'Lorem ipsum dolor sit amet',
-             'start_date': datetime.datetime(2020,1,1,0,0),
-             'due_date': datetime.datetime(2020,3,1,0,0),
-             'end_date': datetime.datetime(2020,5,1,0,0)}
-         ])
+@pytest.mark.parametrize("source_dict",
+                         [{'name': 'a',
+                           'order': 57,
+                           'done': True},
+                          {'name': 'a',
+                           'order': 1,
+                           'done': False,
+                           'description': 'Lorem ipsum dolor sit amet',
+                           'start_date': datetime.datetime(2020, 1, 1, 0, 0),
+                           'due_date': datetime.datetime(2020, 3, 1, 0, 0),
+                           'end_date': datetime.datetime(2020, 5, 1, 0, 0)}
+                          ])
 def test_post_item_route_with_valid_input(test_client, _db, source_dict):
     """ A POST request to /item creates an item with properties specified by
     the JSON payload. We specify _db as a fixture even though we don't use
@@ -116,11 +116,12 @@ def test_post_item_route_with_valid_input(test_client, _db, source_dict):
     # instance, in containing an ID, and in containing default values for other
     # things that weren't specified).
     assert asdict(created_item).items() >= source_dict.items()
-    
+
+
 @pytest.mark.parametrize(
-        "itemid, method", 
-        product([sys.maxsize, "0.5", "-1", "1&garbage", "", "spork"],
-                ["GET", "DELETE"]))
+    "itemid, method",
+    product([sys.maxsize, "0.5", "-1", "1&garbage", "", "spork"],
+            ["GET", "DELETE"]))
 def test_invalid_itemid(test_client, _db, itemid, method):
     """ The /item/<id> route fails with a 404 for IDs that don't convert to
     integers or that don't correspond to an item in the database, and
@@ -136,22 +137,23 @@ def test_invalid_itemid(test_client, _db, itemid, method):
     return_value = test_client.open(method=method, path='/item/%s' % itemid)
     assert return_value.status_code == 404
 
-@pytest.mark.parametrize("source_dict", 
-        [{'name': 'name too long '*100,
-             'order': 57,
-             'done': True},
-         {'name': 'no order number', 
-             'done': False},
-         {'name': 'unstandardized date format', 
-             'order': 12,
-             'done': False,
-             'start_date': 'January 21, 2012'},
-         {'name': 'extraneous fields',
-             'order': 12,
-             'done': False,
-             'spatula': 'albuquerque'},
-         {} # Empty JSON
-         ])
+
+@pytest.mark.parametrize("source_dict",
+                         [{'name': 'name too long '*100,
+                           'order': 57,
+                           'done': True},
+                          {'name': 'no order number',
+                           'done': False},
+                          {'name': 'unstandardized date format',
+                           'order': 12,
+                           'done': False,
+                           'start_date': 'January 21, 2012'},
+                          {'name': 'extraneous fields',
+                           'order': 12,
+                           'done': False,
+                           'spatula': 'albuquerque'},
+                          {}  # Empty JSON
+                          ])
 def test_invalid_post(test_client, _db, source_dict):
     """ The /item POST route fails with a 400 if you give it JSON that fails in
     various ways to satisfy the ItemSchema schema in models.py. """
@@ -166,11 +168,7 @@ def test_invalid_post(test_client, _db, source_dict):
     return_value = test_client.post('/item', json=source_dict)
 
     # The request fails with a 400 error.
-    try:
-        assert return_value.status_code == 400
-    except:
-        print(Item.query.all())
+    assert return_value.status_code == 400
 
     # Nothing is added to the database.
     assert Item.query.all() == items
-
