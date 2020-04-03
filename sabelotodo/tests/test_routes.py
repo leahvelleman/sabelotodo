@@ -73,11 +73,14 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
 
     # The request succeeds.
     assert return_value.status_code == 200
+
     # The items left in the database are the ones we expect.
     assert sorted(Item.query.all()) == sorted(remainder)
+
     # There is no longer an item in the database with the ID of the one we
     # selected for deletion.
-    assert Item.query.filter_by(id=selection.id).all() == []
+    get_attempt = test_client.get('/item/%s' % selection.id)
+    assert get_attempt.status_code == 404
 
 
 @pytest.mark.parametrize("source_dict", 
