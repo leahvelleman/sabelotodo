@@ -1,5 +1,6 @@
 from flask import abort, jsonify, request, Response, current_app as app
 from marshmallow import ValidationError
+from sqlalchemy.exc import SQLAlchemyError
 from .models import Item, ItemSchema, db
 from dataclasses import asdict
 
@@ -33,22 +34,25 @@ def delete_item_by_id(itemid: str):
 def create_item():
     json_data = request.get_json()
     if not json_data:
-        return Response(status=400)
+        return "No data provided", 400
 
     try:
         item = item_schema.load(json_data)
     except ValidationError:
-        return Response(status=400)
+        return "JSON provided doesn't match schema", 400
 
     try:
         db.session.add(item)
         db.session.commit()
-    except:
+    except SQLAlchemyError:
         # TODO: This branch of code is currently untested (lbv)
         db.session.rollback()
-        return Response(status=500)
+        return "Database error", 500
 
-    return jsonify(item), 200
+    return jsonify(item), 200   # TODO: This should use item_schema.dump,
+                                # but currently this leads to small
+                                # discrepancies in date string format that
+                                # break tests. (lbv 2020-4-2)
 
 
 if __name__ == '__main__':
