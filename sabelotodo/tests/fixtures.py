@@ -64,7 +64,9 @@ def _db(app, request):
     '''
     Provide the transactional fixtures with access to the database via a
     Flask-SQLAlchemy database connection. `scope='function'` means the tables
-    are dropped after each test.
+    are dropped after each test. To trigger this teardown behavior reliably in
+    a parametrized test, the test function must have this fixture as an
+    argument even if it does not need to use it explicitly in the test body.
     '''
     db.app = app
     from sabelotodo.models import Item  # noqa: F401
