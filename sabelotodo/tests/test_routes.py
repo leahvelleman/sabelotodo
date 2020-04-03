@@ -70,8 +70,14 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
     selection = items[idx]
     remainder = items[:idx] + items[idx+1:]
     return_value = test_client.delete('/item/%s' % selection.id)
+
+    # The request succeeds.
     assert return_value.status_code == 200
+    # The items left in the database are the ones we expect.
     assert sorted(Item.query.all()) == sorted(remainder)
+    # There is no longer an item in the database with the ID of the one we
+    # selected for deletion.
+    assert Item.query.filter_by(id=selection.id).all() == []
 
 
 @pytest.mark.parametrize("source_dict", 
