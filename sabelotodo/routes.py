@@ -55,5 +55,32 @@ def create_item():
     # discrepancies in date string format that break tests. (lbv 2020-4-2)
 
 
+@app.route('/item/<int:itemid>', methods=["PATCH"])
+def patch_item(itemid):
+    item = Item.query.get_or_404(itemid)
+    json_data = request.get_json()
+
+    if not json_data:
+        return "No data provided", 400
+
+    item_data = asdict(item)
+    item_data.update(json_data)
+
+    try:
+        item_schema.load(item_data)
+        for k, v in item_data.items():
+            setattr(item, k, v)
+    except ValidationError:
+        return "JSON provided doesn't match schema when combined with specified item", 400
+
+    try:
+        db.session.commit()
+    except SQLAlchemyError:
+        db.session.rollback()
+        return "Database error", 500
+
+    return "Something good", 200
+
+
 if __name__ == '__main__':
     app.run()

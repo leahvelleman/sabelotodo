@@ -35,9 +35,12 @@ class ItemSchema(ma.SQLAlchemyAutoSchema):
     # The `timezone` argument prevents off-by-a-few-hours
     # errors we were otherwise getting -- I'm unclear on why it needs
     # to be specified, but empirically it works. (lbv)
-    start_date = fields.NaiveDateTime(format="rfc", timezone=GMT)
-    due_date = fields.NaiveDateTime(format="rfc", timezone=GMT)
-    end_date = fields.NaiveDateTime(format="rfc", timezone=GMT)
+    start_date = fields.NaiveDateTime(format="rfc", timezone=GMT,
+            allow_none=True)
+    due_date = fields.NaiveDateTime(format="rfc", timezone=GMT,
+            allow_none=True)
+    end_date = fields.NaiveDateTime(format="rfc", timezone=GMT,
+            allow_none=True)
 
     # Instruct Marshmallow to actually instantiate an Item object when
     # it deserializes using this schema instead of just giving us

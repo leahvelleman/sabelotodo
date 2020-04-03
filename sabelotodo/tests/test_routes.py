@@ -82,6 +82,64 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
     get_attempt = test_client.get('/item/%s' % selection.id)
     assert get_attempt.status_code == 404
 
+@pytest.mark.parametrize("idx, overwrite_dict",
+        product([0, 1, 2],
+            [{'name': 'newname'},
+             {'order': 3},  # An order number that's available
+             {'start_date': datetime.datetime(2020, 1, 1, 0, 0)},
+             {'description': None},
+             {'name': 'multiple things',
+              'description': 'here we are doing multiple fields'}
+             ]))
+def test_patch_itemid_route_with_valid_id(test_client, _db, idx, overwrite_dict):
+    """ A PATCH request to /item/<id> overwrites the specified
+    fields of the item with the specified ID. """
+
+    items = [Item(name="a", order=0, done=False),
+             Item(name="b", order=2, done=True),
+             Item(name="c", order=1, done=False),
+             Item(name="d", order=5, done=False, description="foo")]
+
+    _db.session.add_all(items)
+    _db.session.commit()
+
+    selection = items[idx]
+    return_value = test_client.patch('/item/%s' % selection.id, json=overwrite_dict)
+
+    # The request succeeds.
+    assert return_value.status_code == 200
+
+    # The item in the database has changed in the way we expect.
+    expected_dict = {**asdict(selection), **overwrite_dict}
+    expected_item = Item(**expected_dict)
+    assert Item.query.filter_by(id=selection.id).first() == expected_item
+
+@pytest.mark.parametrize("idx, overwrite_dict",
+        product([0, 1, 2],
+            [{'name': None}
+             ]))
+def test_patch_itemid_route_with_invalid_combinations(test_client, _db, idx, overwrite_dict):
+    """ A PATCH request to /item/<id> overwrites the specified
+    fields of the item with the specified ID. """
+
+    items = [Item(name="a", order=0, done=False),
+             Item(name="b", order=2, done=True),
+             Item(name="c", order=1, done=False),
+             Item(name="d", order=5, done=False, description="foo")]
+
+    _db.session.add_all(items)
+    _db.session.commit()
+
+    selection = items[idx]
+    return_value = test_client.patch('/item/%s' % selection.id, json=overwrite_dict)
+
+    # The request fails.
+    assert return_value.status_code == 400
+
+
+# TODO: Test:
+#  - Can erase a field by passing {fieldname: None}
+
 
 @pytest.mark.parametrize("source_dict",
                          [{'name': 'a',
@@ -121,7 +179,7 @@ def test_post_item_route_with_valid_input(test_client, _db, source_dict):
 @pytest.mark.parametrize(
     "itemid, method",
     product([sys.maxsize, "0.5", "-1", "1&garbage", "", "spork"],
-            ["GET", "DELETE"]))
+            ["GET", "DELETE", "PATCH"]))
 def test_invalid_itemid(test_client, _db, itemid, method):
     """ The /item/<id> route fails with a 404 for IDs that don't convert to
     integers or that don't correspond to an item in the database, and
