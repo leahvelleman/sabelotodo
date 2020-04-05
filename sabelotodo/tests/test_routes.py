@@ -105,6 +105,8 @@ def test_patch_itemid_route_with_valid_id(test_client, _db, idx, overwrite_dict)
 
     selection = items[idx]
     return_value = test_client.patch('/item/%s' % selection.id, json=overwrite_dict)
+    returned_data = return_value.data
+    changed_item = Item.query.filter_by(id=selection.id).first()
 
     # The request succeeds.
     assert return_value.status_code == 200
@@ -112,11 +114,17 @@ def test_patch_itemid_route_with_valid_id(test_client, _db, idx, overwrite_dict)
     # The item in the database has changed in the way we expect.
     expected_dict = {**asdict(selection), **overwrite_dict}
     expected_item = Item(**expected_dict)
-    assert Item.query.filter_by(id=selection.id).first() == expected_item
+    changed_item == expected_item
+
+    # The returned dictionary matches the changed item in the database
+    # modulo the effects of json encoding.
+    assert json.loads(returned_data) == json.loads(json.dumps(changed_item))
 
 @pytest.mark.parametrize("idx, overwrite_dict",
         product([0, 1, 2],
-            [{'name': None}
+            [{'name': None},  # Remove a required field
+             {'done': 'asdf'} # Wrong type: string in a boolean field
+             # TODO: When order number uniqueness is implemented, test it here
              ]))
 def test_patch_itemid_route_with_invalid_combinations(test_client, _db, idx, overwrite_dict):
     """ A PATCH request to /item/<id> overwrites the specified
