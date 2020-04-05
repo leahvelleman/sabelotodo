@@ -60,15 +60,20 @@ def patch_item(itemid):
 
     if not json_data:
         return "No data provided", 400
+    if "id" in json_data:
+        return "ID numbers shouldn't change", 400
 
     item_data = item_schema.dump(item)
     item_data.update(json_data)
 
     try:
-        print(item_data)
         item_schema.load(item_data)
         for k, v in item_data.items():
             setattr(item, k, v)
+    # We copy the attributes over like this rather than create a new item so
+    # that we're modifying the existing DB row rather than creating a duplicate
+    # one with a new ID.
+
     except ValidationError as v:
         return "JSON provided doesn't match schema when combined with specified item: %s" % v, 400
 
@@ -80,7 +85,6 @@ def patch_item(itemid):
         return "Database error", 500
 
     return item_schema.dumps(item), 200
-
 
 
 if __name__ == '__main__':
