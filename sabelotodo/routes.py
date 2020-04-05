@@ -1,10 +1,10 @@
-from dataclasses import asdict
-from flask import jsonify, request, Response, current_app as app
+from flask import request, current_app as app
 from marshmallow import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 from .models import Item, ItemSchema, db
 
 item_schema = ItemSchema()
+items_schema = ItemSchema(many=True)
 
 
 @app.route('/')
@@ -14,13 +14,13 @@ def hello():
 
 @app.route('/item', methods=["GET"])
 def all_items():
-    return jsonify([asdict(i) for i in Item.query.all()])
+    return items_schema.dumps(Item.query.all())
 
 
 @app.route('/item/<int:itemid>')
 def get_item_by_id(itemid):
     item = Item.query.get_or_404(itemid)
-    return asdict(item)
+    return item_schema.dumps(item)
 
 
 @app.route('/item/<int:itemid>', methods=["DELETE"])
@@ -28,7 +28,7 @@ def delete_item_by_id(itemid: str):
     item = Item.query.get_or_404(itemid)
     db.session.delete(item)
     db.session.commit()
-    return Response(status=200)
+    return item_schema.dumps(item), 200
 
 
 @app.route('/item', methods=["POST"])
@@ -50,9 +50,7 @@ def create_item():
         db.session.rollback()
         return "Database error", 500
 
-    return jsonify(item), 200
-    # TODO: This should use item_schema.dump, but currently this leads to small
-    # discrepancies in date string format that break tests. (lbv 2020-4-2)
+    return item_schema.dumps(item), 200
 
 
 @app.route('/item/<int:itemid>', methods=["PATCH"])
@@ -63,13 +61,11 @@ def patch_item(itemid):
     if not json_data:
         return "No data provided", 400
 
-    print(item)
-    item_data = asdict(item)
-    print(item_data)
+    item_data = item_schema.dump(item)
     item_data.update(json_data)
-    print(item_data)
 
     try:
+        print(item_data)
         item_schema.load(item_data)
         for k, v in item_data.items():
             setattr(item, k, v)
@@ -83,9 +79,7 @@ def patch_item(itemid):
         db.session.rollback()
         return "Database error", 500
 
-    return jsonify(item), 200
-    # TODO: This should use item_schema.dump, but currently this leads to small
-    # discrepancies in date string format that break tests. (lbv 2020-4-2)
+    return item_schema.dumps(item), 200
 
 
 if __name__ == '__main__':
