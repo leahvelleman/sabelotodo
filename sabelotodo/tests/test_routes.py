@@ -52,6 +52,7 @@ VALID_OVERWRITE_DATA = [{'name': 'name change only'},
 INVALID_OVERWRITE_DATA = [{'name': None},  # Remove a required field
                           {'name': 'name too long '*100},
                           {'id': None},
+                          {'start_date': 'January 21, 2012'},
                           {'id': 37},  # Primary key should be immutable,
                                        # since we use it as a foreign key
                           {},
