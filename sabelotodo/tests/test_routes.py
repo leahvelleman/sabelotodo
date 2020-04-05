@@ -50,6 +50,7 @@ VALID_OVERWRITE_DATA = [{'name': 'name change only'},
                         {'order': 12}]
 
 INVALID_OVERWRITE_DATA = [{'name': None},  # Remove a required field
+                          {'name': 'name too long '*100},
                           {},
                           {'done': 'asdf'}]  # Wrong type: string in a boolean field
 
@@ -98,6 +99,7 @@ def test_item_route_with_multiple_items(test_client, _db):
     return_value = test_client.get('/item')
     returned_items = items_schema.loads(return_value.data)
 
+    assert return_value.status_code == 200, "The request succeeds."
     assert returned_items == Item.query.all(), "Returned items match database."
 
 
@@ -113,7 +115,8 @@ def test_get_itemid_route_with_valid_id(test_client, _db, idx):
     return_value = test_client.get('/item/%s' % selection.id)
     returned_item = item_schema.loads(return_value.data)
 
-    assert returned_item == [selection], "We get back the item we expect."
+    assert return_value.status_code == 200, "The request succeeds."
+    assert returned_item == selection, "We get back the item we expect."
 
 
 @pytest.mark.parametrize("idx", range(len(VALID_ITEM_DATA)))
