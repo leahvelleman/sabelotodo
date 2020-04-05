@@ -76,10 +76,13 @@ def patch_item(itemid):
     try:
         db.session.commit()
     except SQLAlchemyError:
+        # TODO: This branch of code is currently untested (lbv)
         db.session.rollback()
         return "Database error", 500
 
-    return "Something good", 200
+    return jsonify(item), 200
+    # TODO: This should use item_schema.dump, but currently this leads to small
+    # discrepancies in date string format that break tests. (lbv 2020-4-2)
 
 
 if __name__ == '__main__':
