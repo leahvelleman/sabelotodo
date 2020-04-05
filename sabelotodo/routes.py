@@ -63,15 +63,18 @@ def patch_item(itemid):
     if not json_data:
         return "No data provided", 400
 
+    print(item)
     item_data = asdict(item)
+    print(item_data)
     item_data.update(json_data)
+    print(item_data)
 
     try:
         item_schema.load(item_data)
         for k, v in item_data.items():
             setattr(item, k, v)
-    except ValidationError:
-        return "JSON provided doesn't match schema when combined with specified item", 400
+    except ValidationError as v:
+        return "JSON provided doesn't match schema when combined with specified item: %s" % v, 400
 
     try:
         db.session.commit()

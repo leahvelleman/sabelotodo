@@ -61,6 +61,7 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
     specified ID. """
 
     items = [Item(name="a", order=0, done=False),
+             Item(name="b", order=2, done=True, start_date='2020-01-01 00:00:00'),
              Item(name="b", order=2, done=True),
              Item(name="c", order=1, done=False)]
 
@@ -87,6 +88,7 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
             [{'name': 'newname'},
              {'order': 3},  # An order number that's available
              {'start_date': datetime.datetime(2020, 1, 1, 0, 0)},
+             {'start_date': None},
              {'description': None},
              {'name': 'multiple things',
               'description': 'here we are doing multiple fields'}
@@ -96,7 +98,7 @@ def test_patch_itemid_route_with_valid_id(test_client, _db, idx, overwrite_dict)
     fields of the item with the specified ID. """
 
     items = [Item(name="a", order=0, done=False),
-             Item(name="b", order=2, done=True),
+             Item(name="b", order=2, done=True, start_date='2020-01-01 00:00:00'),
              Item(name="c", order=1, done=False),
              Item(name="d", order=5, done=False, description="foo")]
 
@@ -107,6 +109,7 @@ def test_patch_itemid_route_with_valid_id(test_client, _db, idx, overwrite_dict)
     return_value = test_client.patch('/item/%s' % selection.id, json=overwrite_dict)
     returned_data = return_value.data
     changed_item = Item.query.filter_by(id=selection.id).first()
+    print(returned_data)
 
     # The request succeeds.
     assert return_value.status_code == 200
@@ -123,7 +126,7 @@ def test_patch_itemid_route_with_valid_id(test_client, _db, idx, overwrite_dict)
 @pytest.mark.parametrize("idx, overwrite_dict",
         product([0, 1, 2],
             [{'name': None},  # Remove a required field
-             {'done': 'asdf'} # Wrong type: string in a boolean field
+             {'done': 'asdf'}  # Wrong type: string in a boolean field
              # TODO: When order number uniqueness is implemented, test it here
              ]))
 def test_patch_itemid_route_with_invalid_combinations(test_client, _db, idx, overwrite_dict):
