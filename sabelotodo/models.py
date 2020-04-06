@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import datetime
 from marshmallow import fields, post_load
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sabelotodo import db, ma
 
 GMT = datetime.timezone(datetime.timedelta(hours=0))
@@ -23,7 +24,7 @@ class Item(db.Model):
     parent_id: int = db.Column(db.Integer, db.ForeignKey('items.id'))
 
 
-class ItemSchema(ma.SQLAlchemyAutoSchema):
+class ItemSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Item
         include_fk = True
