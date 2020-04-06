@@ -2,7 +2,7 @@ from dataclasses import dataclass
 import datetime
 from marshmallow import fields, post_load
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from sabelotodo import db, ma
+from sabelotodo import db
 
 GMT = datetime.timezone(datetime.timedelta(hours=0))
 
