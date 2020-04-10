@@ -1,10 +1,72 @@
 from dataclasses import dataclass
 import datetime
-from marshmallow import fields, post_load
+import re
+from marshmallow import fields, post_load, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from flask_login import UserMixin
 from sabelotodo import db
+from werkzeug.security import generate_password_hash, check_password_hash
 
 GMT = datetime.timezone(datetime.timedelta(hours=0))
+
+
+@dataclass(eq=True, order=True)  # Support equality and sorting
+class User(UserMixin, db.Model):
+    __tablename__ = 'users'
+    __table_args__ = (db.UniqueConstraint('username',
+                                          name='unique_username'),)
+
+    id: int = db.Column(db.Integer, primary_key=True)
+    username: str = db.Column(db.String, nullable=False, unique=True)
+    password: str = db.Column(db.String(200), nullable=False)
+    email: str = db.Column(db.String, nullable=False)
+
+    def set_password(self, password):
+        """Create hashed password."""
+        self.password = generate_password_hash(password, method='sha256')
+
+    def check_password(self, password):
+        """Confirm hashed password."""
+        return check_password_hash(self.password, password)
+
+
+def validate_username(s):
+    """ Validate username according to arbitrary but sensible guidelines:
+    can't be too short or too long, can't have anything outside of the full
+    range of Unicode letters and digits. """
+    if len(s) < 3:
+        raise ValidationError("Username %s too short." % s)
+    if len(s) > 30:
+        raise ValidationError("Username %s too long." % s)
+    if not re.fullmatch(r"\w*", s):
+        raise ValidationError("Username %s has non-alphanumeric characters." % s)
+
+
+def validate_password(s):
+    """ Validate password according to NIST guidelines: can't be too short,
+    can't be too long, otherwise anything is permitted. """
+    if len(s) < 8:
+        raise ValidationError("Password too short.")
+    if len(s) > 64:
+        raise ValidationError("Password too long.")
+
+
+class UserSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = User
+        include_fk = True
+        sqla_session = db.Session
+        load_instance = True
+        load_only = ('password',)  # Refuse to serialize a password
+
+    username = fields.Str(validate=validate_username)
+    password = fields.Str(validate=validate_password)
+    email = fields.Email()
+
+    @post_load
+    def set_password(self, user, **kwargs):
+        user.set_password(user.password)
+        return(user)
 
 
 @dataclass(eq=True, order=True)  # Support equality and sorting
@@ -28,6 +90,8 @@ class ItemSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Item
         include_fk = True
+        sqla_session = db.Session
+        load_instance = True
 
     # Override these fields so we can tell Marshmallow more about
     # time format and time zone. `NaiveDateTime` means we're not
@@ -37,15 +101,8 @@ class ItemSchema(SQLAlchemyAutoSchema):
     # errors we were otherwise getting -- I'm unclear on why it needs
     # to be specified, but empirically it works. (lbv)
     start_date = fields.NaiveDateTime(format="rfc", timezone=GMT,
-            allow_none=True)
+                                      allow_none=True)
     due_date = fields.NaiveDateTime(format="rfc", timezone=GMT,
-            allow_none=True)
+                                    allow_none=True)
     end_date = fields.NaiveDateTime(format="rfc", timezone=GMT,
-            allow_none=True)
-
-    # Instruct Marshmallow to actually instantiate an Item object when
-    # it deserializes using this schema instead of just giving us
-    # a dictionary we could use to instantiate one ourselves.
-    @post_load
-    def make_item(self, data, **kwargs):
-        return Item(**data)
+                                    allow_none=True)
