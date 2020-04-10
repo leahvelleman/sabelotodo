@@ -37,4 +37,3 @@ INVALID_USER_DATA = [
          'useless': 'this is bad',
          'password': 'squeedleblorf'},
          ]
-

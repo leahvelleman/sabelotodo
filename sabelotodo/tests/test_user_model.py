@@ -10,8 +10,6 @@ user_schema = UserSchema()
 users_schema = UserSchema(many=True)
 
 
-
-
 @pytest.mark.parametrize("data", VALID_USER_DATA)
 def test_create_user(_db, data):
     """ When a new User is created, the username and email fields
