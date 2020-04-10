@@ -1,10 +1,10 @@
-from dataclasses import asdict
-from flask import jsonify, request, Response, current_app as app
+from flask import request, current_app as app
 from marshmallow import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
 from .models import Item, ItemSchema, db
 
 item_schema = ItemSchema()
+items_schema = ItemSchema(many=True)
 
 
 @app.route('/')
@@ -14,13 +14,13 @@ def hello():
 
 @app.route('/item', methods=["GET"])
 def all_items():
-    return jsonify([asdict(i) for i in Item.query.all()])
+    return items_schema.dumps(Item.query.all())
 
 
 @app.route('/item/<int:itemid>')
 def get_item_by_id(itemid):
     item = Item.query.get_or_404(itemid)
-    return asdict(item)
+    return item_schema.dumps(item)
 
 
 @app.route('/item/<int:itemid>', methods=["DELETE"])
@@ -28,7 +28,7 @@ def delete_item_by_id(itemid: str):
     item = Item.query.get_or_404(itemid)
     db.session.delete(item)
     db.session.commit()
-    return Response(status=200)
+    return item_schema.dumps(item), 200
 
 
 @app.route('/item', methods=["POST"])
@@ -50,9 +50,35 @@ def create_item():
         db.session.rollback()
         return "Database error", 500
 
-    return jsonify(item), 200
-    # TODO: This should use item_schema.dump, but currently this leads to small
-    # discrepancies in date string format that break tests. (lbv 2020-4-2)
+    return item_schema.dumps(item), 200
+
+
+@app.route('/item/<int:itemid>', methods=["PATCH"])
+def patch_item(itemid):
+    item = Item.query.get_or_404(itemid)
+    json_data = request.get_json()
+
+    if not json_data:
+        return "No data provided", 400
+    if "id" in json_data:
+        return "ID numbers shouldn't change", 400
+
+    try:
+        update = item_schema.load(json_data, instance=item, partial=True)
+        update.id = itemid
+    except ValidationError as v:
+        return "JSON provided doesn't match schema when combined with specified item: %s" % v, 400
+
+    try:
+        db.session.merge(update)
+        db.session.commit()
+    except SQLAlchemyError as e:
+        # TODO: This branch of code is currently untested (lbv)
+        db.session.rollback()
+        print(e)
+        return "Database error", 500
+
+    return item_schema.dumps(item), 200
 
 
 if __name__ == '__main__':
