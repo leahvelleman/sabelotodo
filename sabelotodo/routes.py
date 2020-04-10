@@ -1,10 +1,12 @@
 from flask import request, current_app as app
 from marshmallow import ValidationError
 from sqlalchemy.exc import SQLAlchemyError
-from .models import Item, ItemSchema, db
+from .models import Item, ItemSchema, User, UserSchema, db
 
 item_schema = ItemSchema()
 items_schema = ItemSchema(many=True)
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
 
 
 @app.route('/')
@@ -79,6 +81,11 @@ def patch_item(itemid):
         return "Database error", 500
 
     return item_schema.dumps(item), 200
+
+
+@app.route('/user', methods=["GET"])
+def all_users():
+    return users_schema.dumps(User.query.all())
 
 
 if __name__ == '__main__':
