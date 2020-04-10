@@ -55,7 +55,7 @@ class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
         include_fk = True
-        sqla_session = db.Session
+        sqla_session = db.session
         load_instance = True
         load_only = ('password',)  # Refuse to serialize a password
 
@@ -90,7 +90,7 @@ class ItemSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Item
         include_fk = True
-        sqla_session = db.Session
+        sqla_session = db.session
         load_instance = True
 
     # Override these fields so we can tell Marshmallow more about
