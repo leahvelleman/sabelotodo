@@ -32,11 +32,6 @@ def all_items():
     return items_schema.dumps(Item.query.all())
 
 
-@app.route('/user', methods=["GET"])
-def all_users():
-    return users_schema.dumps(User.query.all())
-
-
 @app.route('/item/<int:itemid>')
 def get_item_by_id(itemid):
     item = Item.query.get_or_404(itemid)
