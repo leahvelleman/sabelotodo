@@ -3,7 +3,6 @@ import datetime
 import re
 from marshmallow import fields, post_load, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
-from flask_login import UserMixin
 from sabelotodo import db
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -11,7 +10,7 @@ GMT = datetime.timezone(datetime.timedelta(hours=0))
 
 
 @dataclass(eq=True, order=True)  # Support equality and sorting
-class User(UserMixin, db.Model):
+class User(db.Model):
     __tablename__ = 'users'
     __table_args__ = (db.UniqueConstraint('username',
                                           name='unique_username'),)
