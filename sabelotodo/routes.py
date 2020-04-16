@@ -1,10 +1,25 @@
 from flask import request, current_app as app
+from functools import wraps
 from marshmallow import ValidationError
-from sqlalchemy.exc import SQLAlchemyError
-from .models import Item, ItemSchema, db
+from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DataError
+from .models import Item, ItemSchema, User, UserSchema, db
 
 item_schema = ItemSchema()
 items_schema = ItemSchema(many=True)
+user_schema = UserSchema()
+users_schema = UserSchema(many=True)
+
+
+@app.errorhandler(ValidationError)
+def handle_validation_error(error):
+    return "Validation error: %s" % error, 400
+
+
+@app.errorhandler(SQLAlchemyError)
+def handle_sqlalchemy_error(error):
+    db.session.rollback()
+    return "Database error: %s" % error, 500
+
 
 
 @app.route('/')
@@ -23,6 +38,12 @@ def get_item_by_id(itemid):
     return item_schema.dumps(item)
 
 
+@app.route('/user/<int:userid>')
+def get_user_by_id(userid):
+    user = User.query.get_or_404(userid)
+    return user_schema.dumps(user)
+
+
 @app.route('/item/<int:itemid>', methods=["DELETE"])
 def delete_item_by_id(itemid: str):
     item = Item.query.get_or_404(itemid)
@@ -37,19 +58,9 @@ def create_item():
     if not json_data:
         return "No data provided", 400
 
-    try:
-        item = item_schema.load(json_data)
-    except ValidationError:
-        return "JSON provided doesn't match schema", 400
-
-    try:
-        db.session.add(item)
-        db.session.commit()
-    except SQLAlchemyError:
-        # TODO: This branch of code is currently untested (lbv)
-        db.session.rollback()
-        return "Database error", 500
-
+    item = item_schema.load(json_data)
+    db.session.add(item)
+    db.session.commit()
     return item_schema.dumps(item), 200
 
 
@@ -57,28 +68,18 @@ def create_item():
 def patch_item(itemid):
     item = Item.query.get_or_404(itemid)
     json_data = request.get_json()
-
     if not json_data:
         return "No data provided", 400
     if "id" in json_data:
         return "ID numbers shouldn't change", 400
 
-    try:
-        update = item_schema.load(json_data, instance=item, partial=True)
-        update.id = itemid
-    except ValidationError as v:
-        return "JSON provided doesn't match schema when combined with specified item: %s" % v, 400
-
-    try:
-        db.session.merge(update)
-        db.session.commit()
-    except SQLAlchemyError as e:
-        # TODO: This branch of code is currently untested (lbv)
-        db.session.rollback()
-        print(e)
-        return "Database error", 500
-
+    update = item_schema.load(json_data, instance=item, partial=True)
+    update.id = itemid
+    db.session.merge(update)
+    db.session.commit()
     return item_schema.dumps(item), 200
+
+
 
 
 if __name__ == '__main__':
