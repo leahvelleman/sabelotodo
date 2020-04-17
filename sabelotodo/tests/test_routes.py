@@ -3,102 +3,18 @@ import sys
 from itertools import product
 
 from sabelotodo.models import Item, ItemSchema
+from .helpers import populate
+from .testdata import VALID_ITEM_DATA, ADDITIONAL_VALID_ITEM_DATA, \
+        INVALID_ITEM_DATA, VALID_OVERWRITE_DATA, INVALID_OVERWRITE_DATA
 
 item_schema = ItemSchema()
 items_schema = ItemSchema(many=True)
-
-VALID_ITEM_DATA = [{'name': 'minimal', 'order': 0, 'done': False},
-                   {'name': 'has_start_date', 'order': 1, 'done': False,
-                       'start_date': 'Sun, 06 Nov 94 08:49:37 -0000'},
-                   {'name': 'has_description', 'order': 4, 'done': False,
-                       'description': 'Lorem ipsum dolor sit amet.'},
-                   {'name': 'already_done', 'order': 8, 'done': True}]
-
-ADDITIONAL_VALID_ITEM_DATA = [{'name': 'a',
-                               'order': 57,
-                               'done': True},
-                              {'name': 'a',
-                               'order': 1,
-                               'done': False,
-                               'description': 'Lorem ipsum dolor sit amet',
-                               'start_date': 'Sun, 05 Apr 20 19:22:13 -0000',
-                               'due_date': 'Mon, 09 Nov 81 19:22:13 -0000',
-                               'end_date': 'Sun, 08 Jun 56 19:22:13 -0000'}]
-
-INVALID_ITEM_DATA = [{'name': 'name too long '*100,
-                      'order': 57,
-                      'done': True},
-                     {'name': 'no order number',
-                      'done': False},
-                     {'name': 'unstandardized date format',
-                      'order': 12,
-                      'done': False,
-                      'start_date': 'January 21, 2012'},
-                     {'name': 'extraneous fields',
-                      'order': 12,
-                      'done': False,
-                      'spatula': 'albuquerque'},
-                     {}  # Empty JSON
-                     ]
-
-VALID_OVERWRITE_DATA = [{'name': 'name change only'},
-                        {'name': 'name and doneness', 'done': True},
-                        {'name': 'update that could overwrite a field',
-                         'description': None},
-                        {'name': 'name and date',
-                         'start_date': 'Tue, 08 Nov 94 08:49:37 -0000'},
-                        {'order': 12}]
-
-INVALID_OVERWRITE_DATA = [{'name': None},  # Remove a required field
-                          {'name': 'name too long '*100},
-                          {'id': None},
-                          {'start_date': 'January 21, 2012'},
-                          {'id': 37},  # Primary key should be immutable,
-                                       # since we use it as a foreign key
-                          {},
-                          {'done': 'asdf'}]  # Wrong type: string in a boolean field
-
-
-@pytest.mark.parametrize("data", VALID_ITEM_DATA)
-def test_create_item_from_empty(_db, data):
-    """ An item can be added directly to an empty database. """
-    item = item_schema.load(data)
-
-    before = Item.query.all()
-    _db.session.add(item)
-    _db.session.commit()
-    after = Item.query.all()
-
-    created = [i for i in after if i not in before]
-    assert created == [item], "Only the specified item is created."
-
-
-@pytest.mark.parametrize("data", ADDITIONAL_VALID_ITEM_DATA)
-def test_create_item_from_populated(_db, data):
-    """ An item can be added directly to a populated database. """
-
-    items = items_schema.load(VALID_ITEM_DATA)
-    _db.session.add_all(items)
-    _db.session.commit()
-
-    item = item_schema.load(data)
-
-    before = Item.query.all()
-    _db.session.add(item)
-    _db.session.commit()
-    after = Item.query.all()
-
-    created = [i for i in after if i not in before]
-
-    assert created == [item], "Only the specified item is created."
 
 
 def test_item_route_with_multiple_items(test_client, _db):
     """ The /item route retrieves all items added. """
 
-    items = items_schema.load(VALID_ITEM_DATA)
-    _db.session.add_all(items)
-    _db.session.commit()
+    populate(_db, items_schema, VALID_ITEM_DATA)
 
     return_value = test_client.get('/item')
     returned_items = items_schema.loads(return_value.data)
@@ -111,10 +27,7 @@ def test_item_route_with_multiple_items(test_client, _db):
 def test_get_itemid_route_with_valid_id(test_client, _db, idx):
     """ The /item/<id> route retrieves just the item with the specified ID. """
 
-    items = items_schema.load(VALID_ITEM_DATA)
-    _db.session.add_all(items)
-    _db.session.commit()
-
+    items = populate(_db, items_schema, VALID_ITEM_DATA)
     selection = items[idx]
     return_value = test_client.get('/item/%s' % selection.id)
     returned_item = item_schema.loads(return_value.data)
@@ -128,10 +41,7 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
     """ A DELETE request to /item/<id> deletes the item with the
     specified ID. """
 
-    items = items_schema.load(VALID_ITEM_DATA)
-    _db.session.add_all(items)
-    _db.session.commit()
-
+    items = populate(_db, items_schema, VALID_ITEM_DATA)
     selection = items[idx]
     remainder = items[:idx] + items[idx+1:]
     return_value = test_client.delete('/item/%s' % selection.id)
@@ -154,10 +64,7 @@ def test_patch_itemid_route_with_valid_id(test_client, _db, idx, overwrite_dict)
     """ A PATCH request to /item/<id> overwrites the specified
     fields of the item with the specified ID. """
 
-    items = items_schema.load(VALID_ITEM_DATA)
-    _db.session.add_all(items)
-    _db.session.commit()
-
+    items = populate(_db, items_schema, VALID_ITEM_DATA)
     selection = items[idx]
     return_value = test_client.patch('/item/%s' % selection.id, json=overwrite_dict)
 
@@ -175,9 +82,7 @@ def test_patch_itemid_route_with_invalid_combinations(test_client, _db, idx, ove
     """ A PATCH request to /item/<id> overwrites the specified
     fields of the item with the specified ID. """
 
-    items = items_schema.load(VALID_ITEM_DATA)
-    _db.session.add_all(items)
-    _db.session.commit()
+    items = populate(_db, items_schema, VALID_ITEM_DATA)
 
     before = Item.query.all()
     selection = items[idx]
@@ -194,14 +99,13 @@ def test_post_item_route_with_valid_input(test_client, _db, request_dict):
     the JSON payload. We specify _db as a fixture even though we don't use
     it so that the database will be torn down after each run. """
 
-    items = items_schema.load(VALID_ITEM_DATA)
-    _db.session.add_all(items)
-    _db.session.commit()
+    populate(_db, items_schema, VALID_ITEM_DATA)
 
     before = Item.query.all()
     return_value = test_client.post('/item', json=request_dict)
     returned_item = item_schema.loads(return_value.data)
     after = Item.query.all()
+
     created = [i for i in after if i not in before]
 
     assert return_value.status_code == 200, "The request succeeds."
@@ -219,9 +123,7 @@ def test_invalid_itemid(test_client, _db, itemid, method):
     integers or that don't correspond to an item in the database, and
     does so for any of the methods we support. """
 
-    items = items_schema.load(VALID_ITEM_DATA)
-    _db.session.add_all(items)
-    _db.session.commit()
+    populate(_db, items_schema, VALID_ITEM_DATA)
 
     before = Item.query.all()
     return_value = test_client.open(method=method, path='/item/%s' % itemid)
@@ -236,9 +138,7 @@ def test_invalid_post(test_client, _db, source_dict):
     """ The /item POST route fails with a 400 if you give it JSON that fails in
     various ways to satisfy the ItemSchema schema in models.py. """
 
-    items = items_schema.load(VALID_ITEM_DATA)
-    _db.session.add_all(items)
-    _db.session.commit()
+    populate(_db, items_schema, VALID_ITEM_DATA)
 
     before = Item.query.all()
     return_value = test_client.post('/item', json=source_dict)
