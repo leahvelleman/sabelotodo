@@ -1,3 +1,5 @@
+import sys
+
 VALID_ITEM_DATA = [{'name': 'minimal', 'order': 0, 'done': False},
                    {'name': 'has_start_date', 'order': 1, 'done': False,
                        'start_date': 'Sun, 06 Nov 94 08:49:37 -0000'},
@@ -103,3 +105,5 @@ INVALID_USER_DATA = [
          'useless': 'this is bad',
          'password': 'squeedleblorf'},
          ]
+
+INVALID_ID_NUMBERS = [sys.maxsize, "0.5", "-1", "1&garbage", "", "spork"]

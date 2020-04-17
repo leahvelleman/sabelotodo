@@ -1,11 +1,11 @@
 import pytest
-import sys
 from itertools import product
 
 from sabelotodo.models import Item, ItemSchema
 from .helpers import populate
 from .testdata import VALID_ITEM_DATA, ADDITIONAL_VALID_ITEM_DATA, \
-        INVALID_ITEM_DATA, VALID_OVERWRITE_DATA, INVALID_OVERWRITE_DATA
+        INVALID_ITEM_DATA, VALID_OVERWRITE_DATA, INVALID_OVERWRITE_DATA, \
+        INVALID_ID_NUMBERS
 
 item_schema = ItemSchema()
 items_schema = ItemSchema(many=True)
@@ -115,9 +115,7 @@ def test_post_item_route_with_valid_input(test_client, _db, request_dict):
 
 
 @pytest.mark.parametrize(
-    "itemid, method",
-    product([sys.maxsize, "0.5", "-1", "1&garbage", "", "spork"],
-            ["GET", "DELETE", "PATCH"]))
+    "itemid, method", product(INVALID_ID_NUMBERS, ["GET", "DELETE", "PATCH"]))
 def test_invalid_itemid(test_client, _db, itemid, method):
     """ The /item/<id> route fails with a 404 for IDs that don't convert to
     integers or that don't correspond to an item in the database, and
