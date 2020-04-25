@@ -1,7 +1,6 @@
 from flask import request, current_app as app
-from functools import wraps
 from marshmallow import ValidationError
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DataError
+from sqlalchemy.exc import SQLAlchemyError
 from .models import Item, ItemSchema, User, UserSchema, db
 
 item_schema = ItemSchema()
@@ -19,7 +18,6 @@ def handle_validation_error(error):
 def handle_sqlalchemy_error(error):
     db.session.rollback()
     return "Database error: %s" % error, 500
-
 
 
 @app.route('/')
@@ -58,7 +56,7 @@ def create_item():
     if not json_data:
         return "No data provided", 400
 
-    item = item_schema.load(json_data)
+    item = Item(**json_data)
     db.session.add(item)
     db.session.commit()
     return item_schema.dumps(item), 200
@@ -74,8 +72,8 @@ def patch_item(itemid):
         return "ID numbers shouldn't change", 400
 
     update = item_schema.load(json_data, instance=item, partial=True)
-    update.id = itemid
-    db.session.merge(update)
+    for k, v in update.items():
+        setattr(item, k, v)
     db.session.commit()
     return item_schema.dumps(item), 200
 

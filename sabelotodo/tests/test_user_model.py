@@ -1,6 +1,4 @@
 import pytest
-import random
-import string
 from sabelotodo.models import User, UserSchema
 from sqlalchemy.exc import IntegrityError
 from marshmallow.exceptions import ValidationError
@@ -14,7 +12,7 @@ users_schema = UserSchema(many=True)
 def test_create_user(_db, data):
     """ When a new User is created, the username and email fields
     are set correctly. """
-    user = user_schema.load(data)
+    user = User(**data)
     assert user.username == data['username']
     assert user.email == data['email']
 
@@ -22,7 +20,7 @@ def test_create_user(_db, data):
 @pytest.mark.parametrize("data", VALID_USER_DATA)
 def test_cannot_serialize_password(_db, data):
     """ When a User is serialized, the password field is omitted. """
-    user = user_schema.load(data)
+    user = User(**data)
     userdict = user_schema.dump(user)
     assert 'password' not in userdict
 
@@ -30,32 +28,32 @@ def test_cannot_serialize_password(_db, data):
 @pytest.mark.parametrize("data", VALID_USER_DATA)
 def test_password_is_stored_hashed(_db, data):
     """ The stored value for a password isn't the plaintext password. """
-    user = user_schema.load(data)
+    user = User(**data)
+    assert user.check_password(data['password'])
     assert user.password != data['password']
 
 
 @pytest.mark.parametrize("data", VALID_USER_DATA)
 def test_password_can_be_checked(_db, data):
     """ Checking with the correct password returns True. """
-    user = user_schema.load(data)
+    user = User(**data)
     assert user.check_password(data['password'])
 
 
 @pytest.mark.parametrize("data", VALID_USER_DATA)
 def test_password_can_be_changed(_db, data):
     """ Changing a password makes the new one work and not the old one. """
-    user = user_schema.load(data)
-    random_string = "".join(random.choice(string.ascii_letters) for i in
-                            range(30))
-    user.set_password(random_string)
-    assert user.check_password(random_string)
+    user = User(**data)
+    newpassword = "asdk98*(23f!N"
+    user.set_password(newpassword)
+    assert user.check_password(newpassword)
     assert not user.check_password(data['password'])
 
 
 @pytest.mark.parametrize("data", VALID_USER_DATA)
 def test_user_can_be_committed(_db, data):
     """ A valid user can be committed to the database. """
-    user = user_schema.load(data)
+    user = User(**data)
     _db.session.add(user)
     _db.session.commit()
     assert User.query.get(user.id) == user
@@ -66,12 +64,12 @@ def test_duplicate_username_is_rejected(_db, data):
     """ Adding a user whose username is already in the database raises
     an SQLAlchemy error. Routes will need to test for this to produce
     a friendly http error code instead. """
-    users = users_schema.load(VALID_USER_DATA)
+    users = [User(**d) for d in VALID_USER_DATA]
     _db.session.add_all(users)
     _db.session.commit()
 
     with pytest.raises(IntegrityError):
-        new_user = user_schema.load(data)
+        new_user = User(**data)
         _db.session.add(new_user)
         _db.session.commit()
     _db.session.rollback()
