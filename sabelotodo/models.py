@@ -38,27 +38,6 @@ class User(db.Model):
         return check_password_hash(self.password, password)
 
 
-def validate_username(s):
-    """ Validate username according to arbitrary but sensible guidelines:
-    can't be too short or too long, can't have anything outside of the full
-    range of Unicode letters and digits. """
-    if len(s) < 3:
-        raise ValidationError("Username %s too short." % s)
-    if len(s) > 30:
-        raise ValidationError("Username %s too long." % s)
-    if not re.fullmatch(r"\w*", s):
-        raise ValidationError("Username %s has non-alphanumeric characters." % s)
-
-
-def validate_password(s):
-    """ Validate password according to NIST guidelines: can't be too short,
-    can't be too long, otherwise anything is permitted. """
-    if len(s) < 8:
-        raise ValidationError("Password too short.")
-    if len(s) > 64:
-        raise ValidationError("Password too long.")
-
-
 class UserSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = User
@@ -66,9 +45,28 @@ class UserSchema(SQLAlchemyAutoSchema):
         sqla_session = db.session
         load_only = ('password',)  # Refuse to serialize a password
 
-    username = fields.Str(validate=validate_username)
-    password = fields.Str(validate=validate_password)
     email = fields.Email()
+
+    @validates("username")
+    def validate_username(self, s):
+        """ Validate username according to arbitrary but sensible guidelines:
+            can't be too short or too long, can't have anything outside of the
+            full range of Unicode letters and digits. """
+        if len(s) < 3:
+            raise ValidationError("Username %s too short." % s)
+        if len(s) > 30:
+            raise ValidationError("Username %s too long." % s)
+        if not re.fullmatch(r"\w*", s):
+            raise ValidationError("Username %s has non-alphanumeric characters." % s)
+
+    @validates("password")
+    def validate_password(self, s):
+        """ Validate password according to NIST guidelines: can't be too short,
+        can't be too long, otherwise anything is permitted. """
+        if len(s) < 8:
+            raise ValidationError("Password too short.")
+        if len(s) > 64:
+            raise ValidationError("Password too long.")
 
 
 @dataclass(eq=True, order=True)  # Support equality and sorting
