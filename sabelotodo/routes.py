@@ -36,12 +36,6 @@ def get_item_by_id(itemid):
     return item_schema.dumps(item)
 
 
-@app.route('/user/<int:userid>')
-def get_user_by_id(userid):
-    user = User.query.get_or_404(userid)
-    return user_schema.dumps(user)
-
-
 @app.route('/item/<int:itemid>', methods=["DELETE"])
 def delete_item_by_id(itemid: str):
     item = Item.query.get_or_404(itemid)
@@ -78,6 +72,37 @@ def patch_item(itemid):
     return item_schema.dumps(item), 200
 
 
+@app.route('/user', methods=["GET"])
+def all_users():
+    return users_schema.dumps(User.query.all())
+
+
+@app.route('/user/<int:userid>')
+def get_user_by_id(userid):
+    user = User.query.get_or_404(userid)
+    return user_schema.dumps(user)
+
+
+@app.route('/user/<int:userid>', methods=["DELETE"])
+def delete_user_by_id(userid: str):
+    user = User.query.get_or_404(userid)
+    db.session.delete(user)
+    db.session.commit()
+    return user_schema.dumps(user), 200
+
+
+@app.route('/user/<int:userid>', methods=['PATCH'])
+def patch_user(userid):
+    user = User.query.get_or_404(userid)
+    json_data = request.get_json()
+    if 'password' in json_data:
+        return 'Cannot change passwords via PATCH', 400
+
+    update = user_schema.load(json_data, instance=user, partial=True)
+    for k, v in update.items():
+        setattr(user, k, v)
+    db.session.commit()
+    return user_schema.dumps(user), 200
 
 
 if __name__ == '__main__':
