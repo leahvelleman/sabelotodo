@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 import datetime
 import re
-from marshmallow import fields, post_load, ValidationError
+from marshmallow import fields, validates, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sabelotodo import db
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -9,7 +9,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 GMT = datetime.timezone(datetime.timedelta(hours=0))
 
 
-@dataclass(eq=True, order=True)  # Support equality and sorting
 class User(db.Model):
     __tablename__ = 'users'
     __table_args__ = (db.UniqueConstraint('username',
@@ -19,6 +18,16 @@ class User(db.Model):
     username: str = db.Column(db.String, nullable=False)
     password: str = db.Column(db.String(200), nullable=False)
     email: str = db.Column(db.String, nullable=False)
+
+    def __init__(self, **kwargs):
+        errors = UserSchema().validate(kwargs)
+        if errors:
+            raise ValidationError("Provided data does not match user schema")
+        self.username = kwargs['username']
+        self.email = kwargs['email']
+        # Don't set password directly; do it through the method so it gets
+        # hashed.
+        self.set_password(kwargs['password'])
 
     def set_password(self, password):
         """Create hashed password."""
@@ -55,17 +64,11 @@ class UserSchema(SQLAlchemyAutoSchema):
         model = User
         include_fk = True
         sqla_session = db.session
-        load_instance = True
         load_only = ('password',)  # Refuse to serialize a password
 
     username = fields.Str(validate=validate_username)
     password = fields.Str(validate=validate_password)
     email = fields.Email()
-
-    @post_load
-    def set_password(self, user, **kwargs):
-        user.set_password(user.password)
-        return(user)
 
 
 @dataclass(eq=True, order=True)  # Support equality and sorting
@@ -84,13 +87,19 @@ class Item(db.Model):
     due_date: datetime = db.Column(db.DateTime)
     parent_id: int = db.Column(db.Integer, db.ForeignKey('items.id'))
 
+    def __init__(self, **kwargs):
+        errors = ItemSchema().validate(kwargs)
+        if errors:
+            raise ValidationError("Provided data does not match user schema")
+        for k in kwargs:
+            setattr(self, k, kwargs[k])
+
 
 class ItemSchema(SQLAlchemyAutoSchema):
     class Meta:
         model = Item
         include_fk = True
         sqla_session = db.session
-        load_instance = True
 
     # Override these fields so we can tell Marshmallow more about
     # time format and time zone. `NaiveDateTime` means we're not
