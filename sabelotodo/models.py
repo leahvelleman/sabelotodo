@@ -1,4 +1,3 @@
-from dataclasses import dataclass
 import datetime
 import re
 from marshmallow import fields, validates, ValidationError
@@ -69,7 +68,6 @@ class UserSchema(SQLAlchemyAutoSchema):
             raise ValidationError("Password too long.")
 
 
-@dataclass(eq=True, order=True)  # Support equality and sorting
 class Item(db.Model):
     __tablename__ = 'items'
     __table_args__ = (db.UniqueConstraint('order', 'parent_id',
