@@ -69,7 +69,7 @@ def _db(app, request):
     argument even if it does not need to use it explicitly in the test body.
     '''
     db.app = app
-    from sabelotodo.models import Item  # noqa: F401
+    from sabelotodo.models import Item, User  # noqa: F401
     db.create_all()
     session = db.session
 
