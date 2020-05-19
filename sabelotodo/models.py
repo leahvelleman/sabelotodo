@@ -1,5 +1,6 @@
 import datetime
 import re
+from dataclasses import dataclass
 from marshmallow import fields, validates, ValidationError
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 from sabelotodo import db
@@ -8,6 +9,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 GMT = datetime.timezone(datetime.timedelta(hours=0))
 
 
+@dataclass(eq=True, order=True)
 class User(db.Model):
     __tablename__ = 'users'
     __table_args__ = (db.UniqueConstraint('username',
@@ -22,11 +24,9 @@ class User(db.Model):
         errors = UserSchema().validate(kwargs)
         if errors:
             raise ValidationError("Provided data does not match user schema")
-        self.username = kwargs['username']
-        self.email = kwargs['email']
-        # Don't set password directly; do it through the method so it gets
-        # hashed.
-        self.set_password(kwargs['password'])
+        pwd = kwargs.pop('password')
+        super().__init__(**kwargs)
+        self.set_password(pwd)
 
     def set_password(self, password):
         """Create hashed password."""
@@ -68,6 +68,7 @@ class UserSchema(SQLAlchemyAutoSchema):
             raise ValidationError("Password too long.")
 
 
+@dataclass(eq=True, order=True)
 class Item(db.Model):
     __tablename__ = 'items'
     __table_args__ = (db.UniqueConstraint('order', 'parent_id',
@@ -86,9 +87,8 @@ class Item(db.Model):
     def __init__(self, **kwargs):
         errors = ItemSchema().validate(kwargs)
         if errors:
-            raise ValidationError("Provided data does not match user schema")
-        for k in kwargs:
-            setattr(self, k, kwargs[k])
+            raise ValidationError("Provided data does not match item schema")
+        super().__init__(**kwargs)
 
 
 class ItemSchema(SQLAlchemyAutoSchema):
