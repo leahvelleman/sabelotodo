@@ -1,7 +1,6 @@
 from flask import request, current_app as app
-from functools import wraps
 from marshmallow import ValidationError
-from sqlalchemy.exc import SQLAlchemyError, IntegrityError, DataError
+from sqlalchemy.exc import SQLAlchemyError
 from .models import Item, ItemSchema, User, UserSchema, db
 
 item_schema = ItemSchema()
@@ -21,7 +20,6 @@ def handle_sqlalchemy_error(error):
     return "Database error: %s" % error, 500
 
 
-
 @app.route('/')
 def hello():
     return "Hello World!"
@@ -38,12 +36,6 @@ def get_item_by_id(itemid):
     return item_schema.dumps(item)
 
 
-@app.route('/user/<int:userid>')
-def get_user_by_id(userid):
-    user = User.query.get_or_404(userid)
-    return user_schema.dumps(user)
-
-
 @app.route('/item/<int:itemid>', methods=["DELETE"])
 def delete_item_by_id(itemid: str):
     item = Item.query.get_or_404(itemid)
@@ -58,7 +50,7 @@ def create_item():
     if not json_data:
         return "No data provided", 400
 
-    item = item_schema.load(json_data)
+    item = Item(**json_data)
     db.session.add(item)
     db.session.commit()
     return item_schema.dumps(item), 200
@@ -74,12 +66,43 @@ def patch_item(itemid):
         return "ID numbers shouldn't change", 400
 
     update = item_schema.load(json_data, instance=item, partial=True)
-    update.id = itemid
-    db.session.merge(update)
+    for k, v in update.items():
+        setattr(item, k, v)
     db.session.commit()
     return item_schema.dumps(item), 200
 
 
+@app.route('/user', methods=["GET"])
+def all_users():
+    return users_schema.dumps(User.query.all())
+
+
+@app.route('/user/<int:userid>')
+def get_user_by_id(userid):
+    user = User.query.get_or_404(userid)
+    return user_schema.dumps(user)
+
+
+@app.route('/user/<int:userid>', methods=["DELETE"])
+def delete_user_by_id(userid: str):
+    user = User.query.get_or_404(userid)
+    db.session.delete(user)
+    db.session.commit()
+    return user_schema.dumps(user), 200
+
+
+@app.route('/user/<int:userid>', methods=['PATCH'])
+def patch_user(userid):
+    user = User.query.get_or_404(userid)
+    json_data = request.get_json()
+    if 'password' in json_data:
+        return 'Cannot change passwords via PATCH', 400
+
+    update = user_schema.load(json_data, instance=user, partial=True)
+    for k, v in update.items():
+        setattr(user, k, v)
+    db.session.commit()
+    return user_schema.dumps(user), 200
 
 
 if __name__ == '__main__':

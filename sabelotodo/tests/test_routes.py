@@ -17,10 +17,10 @@ def test_item_route_with_multiple_items(test_client, _db):
     populate(_db, items_schema, VALID_ITEM_DATA)
 
     return_value = test_client.get('/item')
-    returned_items = items_schema.loads(return_value.data)
+    return_dicts = items_schema.loads(return_value.data)
 
     assert return_value.status_code == 200, "The request succeeds."
-    assert returned_items == Item.query.all(), "Returned items match database."
+    assert len(return_dicts) == len(VALID_ITEM_DATA), "We get everything."
 
 
 @pytest.mark.parametrize("idx", range(len(VALID_ITEM_DATA)))
@@ -28,12 +28,29 @@ def test_get_itemid_route_with_valid_id(test_client, _db, idx):
     """ The /item/<id> route retrieves just the item with the specified ID. """
 
     items = populate(_db, items_schema, VALID_ITEM_DATA)
+
     selection = items[idx]
     return_value = test_client.get('/item/%s' % selection.id)
-    returned_item = item_schema.loads(return_value.data)
+    return_dict = item_schema.loads(return_value.data)
 
     assert return_value.status_code == 200, "The request succeeds."
-    assert returned_item == selection, "We get back the item we expect."
+    return_dict = item_schema.loads(return_value.data)
+
+    assert return_value.status_code == 200, "The request succeeds."
+    assert return_dict['id'] == selection.id, "The ID matches."
+    assert return_dict['name'] == selection.name, "The name matches."
+    assert return_dict['order'] == selection.order, "The order number matches."
+    assert return_dict['done'] == selection.done, "The doneness matches."
+    assert return_dict['description'] == selection.description, \
+        "The description matches."
+    assert return_dict['start_date'] == selection.start_date, \
+        "The start date matches."
+    assert return_dict['end_date'] == selection.end_date, \
+        "The end date matches."
+    assert return_dict['due_date'] == selection.due_date, \
+        "The due date matches."
+    assert return_dict['parent_id'] == selection.parent_id, \
+        "The parent ID matches."
 
 
 @pytest.mark.parametrize("idx", range(len(VALID_ITEM_DATA)))
@@ -42,13 +59,27 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
     specified ID. """
 
     items = populate(_db, items_schema, VALID_ITEM_DATA)
+
     selection = items[idx]
     remainder = items[:idx] + items[idx+1:]
     return_value = test_client.delete('/item/%s' % selection.id)
-    returned_item = item_schema.loads(return_value.data)
+    return_dict = item_schema.loads(return_value.data)
 
     assert return_value.status_code == 200, "The request succeeds."
-    assert returned_item == selection, "We get back the item we expect."
+    assert return_dict['id'] == selection.id, "The ID matches."
+    assert return_dict['name'] == selection.name, "The name matches."
+    assert return_dict['order'] == selection.order, "The order number matches."
+    assert return_dict['done'] == selection.done, "The doneness matches."
+    assert return_dict['description'] == selection.description, \
+        "The description matches."
+    assert return_dict['start_date'] == selection.start_date, \
+        "The start date matches."
+    assert return_dict['end_date'] == selection.end_date, \
+        "The end date matches."
+    assert return_dict['due_date'] == selection.due_date, \
+        "The due date matches."
+    assert return_dict['parent_id'] == selection.parent_id, \
+        "The parent ID matches."
     assert Item.query.all() == remainder, \
         "The remaining items are the ones we expect."
 
@@ -65,15 +96,17 @@ def test_patch_itemid_route_with_valid_id(test_client, _db, idx, overwrite_dict)
     fields of the item with the specified ID. """
 
     items = populate(_db, items_schema, VALID_ITEM_DATA)
+
     selection = items[idx]
-    return_value = test_client.patch('/item/%s' % selection.id, json=overwrite_dict)
+    expected_dict = {**item_schema.dump(selection), **overwrite_dict}
+    return_value = test_client.patch('/item/%s' % selection.id,
+                                     json=overwrite_dict)
+    return_dict = item_schema.dump(selection)
 
     assert return_value.status_code == 200, "The request succeeds."
 
-    expected_dict = {**item_schema.dump(selection), **overwrite_dict}
-    expected_item = item_schema.load(expected_dict)
-    assert selection == expected_item, \
-        "The selected item changes in the expected way."
+    assert expected_dict == return_dict, \
+        "The returned dict has the values we expect."
 
 
 @pytest.mark.parametrize("idx, overwrite_dict",
@@ -103,15 +136,27 @@ def test_post_item_route_with_valid_input(test_client, _db, request_dict):
 
     before = Item.query.all()
     return_value = test_client.post('/item', json=request_dict)
-    returned_item = item_schema.loads(return_value.data)
+    return_dict = item_schema.loads(return_value.data)
     after = Item.query.all()
 
     created = [i for i in after if i not in before]
 
     assert return_value.status_code == 200, "The request succeeds."
     assert len(created) == 1, "One thing is created."
-    assert returned_item == created[0], \
-        "The return value matches what is created."
+    assert return_dict['id'] == created[0].id, "The ID matches."
+    assert return_dict['name'] == created[0].name, "The name matches."
+    assert return_dict['order'] == created[0].order, "The order number matches."
+    assert return_dict['done'] == created[0].done, "The doneness matches."
+    assert return_dict['description'] == created[0].description, \
+        "The description matches."
+    assert return_dict['start_date'] == created[0].start_date, \
+        "The start date matches."
+    assert return_dict['end_date'] == created[0].end_date, \
+        "The end date matches."
+    assert return_dict['due_date'] == created[0].due_date, \
+        "The due date matches."
+    assert return_dict['parent_id'] == created[0].parent_id, \
+        "The parent ID matches."
 
 
 @pytest.mark.parametrize(

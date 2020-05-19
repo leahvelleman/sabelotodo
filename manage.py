@@ -5,7 +5,6 @@ from flask_migrate import Migrate, MigrateCommand
 from sabelotodo import create_app, db
 
 app = create_app()
-
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
 
 migrate = Migrate(app, db)
