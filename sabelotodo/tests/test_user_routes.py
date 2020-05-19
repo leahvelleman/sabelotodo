@@ -17,13 +17,13 @@ def test_user_route_can_return_all_users(test_client, _db):
     return_value = test_client.get('/user')
     return_dicts = users_schema.loads(return_value.data, partial=True)
 
-    assert return_value.status_code == 200, "The request succeeds"
+    assert return_value.status_code == 200, "Wrong status code"
     assert len(return_dicts) == len(VALID_USER_DATA), \
-        "We get the number of records we expect"
+        "Wrong number of records"
     assert return_dicts[0]['username'] == VALID_USER_DATA[0]['username'], \
-        "We get at least one correct username"
+        "Incorrect username"
     assert return_dicts[0]['email'] == VALID_USER_DATA[0]['email'], \
-        "We get at least one correct email"
+        "Incorrect email"
 
 
 def test_user_route_does_not_expose_passwords(test_client, _db):
@@ -37,7 +37,7 @@ def test_user_route_does_not_expose_passwords(test_client, _db):
     return_dicts = users_schema.loads(return_value.data, partial=True)
 
     assert all('password' not in dict for dict in return_dicts), \
-        "None of the returned JSON contains a password"
+        "Returned JSON contains a password"
 
 
 @pytest.mark.parametrize("idx", range(len(VALID_USER_DATA)))
@@ -54,9 +54,9 @@ def test_user_route_can_return_one_user(test_client, _db, idx):
 
     assert return_value.status_code == 200, "The request succeeds."
     assert return_dict['username'] == selection.username, \
-        "The username is correct"
+        "Incorrect username"
     assert return_dict['email'] == selection.email, \
-        "The email is correct"
+        "Incorrect email"
 
 
 @pytest.mark.parametrize("idx", range(len(VALID_USER_DATA)))
@@ -70,8 +70,8 @@ def test_user_route_can_delete_one_user(test_client, _db, idx):
     selection = users[idx]
     return_value = test_client.delete('/user/%s' % selection.id)
 
-    assert return_value.status_code == 200, "The request succeeds."
-    assert selection not in User.query.all(), "The deleted user is gone."
+    assert return_value.status_code == 200, "Incorrect status code"
+    assert selection not in User.query.all(), "Deleted user still in database"
 
 
 @pytest.mark.parametrize("idx", range(len(VALID_USER_DATA)))
@@ -87,9 +87,9 @@ def test_user_route_deleted_user_is_returned(test_client, _db, idx):
     return_dict = user_schema.loads(return_value.data, partial=True)
 
     assert return_dict['username'] == selection.username, \
-        "Returned username matches selected user"
+        "Returned username doesn't match selected user"
     assert return_dict['email'] == selection.email, \
-        "Returned email matches selected user"
+        "Returned email doesn't match selected user"
 
 
 @pytest.mark.parametrize("idx", range(len(VALID_USER_DATA)))
@@ -107,11 +107,11 @@ def test_user_route_can_patch_one_user_username(test_client, _db, idx):
     return_value = test_client.patch('/user/%s' % selection.id,
                                      json={'username': 'somethingelse'})
 
-    assert return_value.status_code == 200, "The request succeeds."
-    assert selection.username == 'somethingelse', "The username changes."
-    assert selection.email == email, "The email doesn't change."
-    assert selection.id == userid, "The userid doesn't change."
-    assert selection.password == password, "The password doesn't change."
+    assert return_value.status_code == 200, "Incorrect status code"
+    assert selection.username == 'somethingelse', "The username doesn't change."
+    assert selection.email == email, "The email changes."
+    assert selection.id == userid, "The userid changes."
+    assert selection.password == password, "The password changes."
 
 
 @pytest.mark.parametrize("idx", range(len(VALID_USER_DATA)))
@@ -131,11 +131,11 @@ def test_user_route_patches_cannot_create_invalid_users(test_client, _db, idx):
     return_value = test_client.patch('/user/%s' % selection.id,
                                      json={'username': 'e'})
 
-    assert return_value.status_code == 400, "The request fails nicely."
-    assert selection.username == username, "The username doesn't change."
-    assert selection.email == email, "The email doesn't change."
-    assert selection.id == userid, "The userid doesn't change."
-    assert selection.password == password, "The password doesn't change."
+    assert return_value.status_code == 400, "Incorrect status code: expected 400"
+    assert selection.username == username, "Username changed."
+    assert selection.email == email, "Email didn't change."
+    assert selection.id == userid, "Userid didn't change."
+    assert selection.password == password, "Password didn't change."
 
 
 @pytest.mark.parametrize("idx", range(len(VALID_USER_DATA)))
@@ -156,8 +156,8 @@ def test_cannot_patch_passwords(test_client, _db, idx):
     return_value = test_client.patch('/user/%s' % selection.id,
                                      json={'password': 'p@ssw0rd'})
 
-    assert return_value.status_code == 400, "The request fails nicely."
-    assert selection.username == username, "The username doesn't change."
-    assert selection.email == email, "The email doesn't change."
-    assert selection.id == userid, "The userid doesn't change."
-    assert selection.password == password, "The password doesn't change."
+    assert return_value.status_code == 400, "Incorrect status code: expected 400"
+    assert selection.username == username, "Username changed."
+    assert selection.email == email, "Email changed."
+    assert selection.id == userid, "Userid changed."
+    assert selection.password == password, "Password changed."
