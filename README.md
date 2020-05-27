@@ -35,8 +35,9 @@ npm install
 
 ### Environment variables
 
-On a Mac, set the following environment variables, either manually or using
-autoenv.
+On macOS, create a file in the root directory called `.env` with the following lines, filling in your username
+and password. The project `.gitignore` keeps this file from being pushed to the server, so it is a relatively
+safe place for a password. Omit `DB_PASSWORD` if the database is not password-protected.
 ```
 export SQLALCHEMY_DATABASE_URI="postgresql:///sabelotodo_dev"
 export SQLALCHEMY_TRACK_MODIFICATIONS=False
@@ -47,14 +48,15 @@ export DB_DATABASE=sabelotodo_test
 export DB_PASSWORD=<your db password>
 export TEST_DATABASE_URL=postgresql:///sabelotodo_test
 ```
-Omit `DB_PASSWORD` if the database is not password-protected.
-
 On Linux, do not set the `DB_HOST` and `DB_PORT` environment variables. Create
 a superuser as the `DB_USER` which matches the username of the user that runs
 the tests.
 
+To set up the environment variables before running or testing the project, use `source .env`.
+
 ### Using Autoenv
 
+Alternatively, you can execute your `.env` file using a tool called Autoenv.
 The Autoenv tool manages environment variables for the project and
 automatically activates the virtual environment when you enter the project
 directory. It is optional but convenient.
@@ -65,9 +67,11 @@ deactivate
 pip install autoenv==1.0.0
 ```
 Then, add the `export` commands above to a file called `.env`.  Finally, add
-``source `which activate.sh` `` to your .bashrc or other startup file, and
+``source `which activate.sh` `` to your `.bashrc` or other startup file, and
 rerun that file. Now, when you leave and reenter the project directory, the
 virtual environment activates automatically. 
+
+If you do not use Autoenv, 
 
 ### Database setup
 
