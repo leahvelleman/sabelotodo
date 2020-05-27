@@ -7,11 +7,11 @@ from sabelotodo import create_app, db
 
 # Retrieve a database connection string from the shell environment
 try:
-    DB_CONN = os.environ['TEST_DATABASE_URL']
+    DB_CONN = os.environ['TEST_DATABASE_URI']
 except KeyError:
-    raise KeyError('TEST_DATABASE_URL not found. You must export a database ' +
+    raise KeyError('TEST_DATABASE_URI not found. You must export a database ' +
                    'connection string to the environmental variable ' +
-                   'TEST_DATABASE_URL in order to run tests.')
+                   'TEST_DATABASE_URI in order to run tests.')
 else:
     DB_OPTS = sa.engine.url.make_url(DB_CONN).translate_connect_args()
 
@@ -25,9 +25,9 @@ def database(request):
     '''
     pg_host = os.environ.get('DB_HOST')
     pg_port = os.environ.get('DB_PORT')
-    pg_user = os.environ.get('DB_USER')
-    pg_db = os.environ.get('DB_DATABASE')
+    pg_user = os.environ.get('DB_USER') or 'postgres'
     pg_pass = os.environ.get('DB_PASSWORD')
+    pg_db = os.environ.get('TEST_DATABASE_NAME')
 
     janitor = DatabaseJanitor(user=pg_user,
                               port=pg_port,
