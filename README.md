@@ -33,19 +33,40 @@ pip install -r requirements-dev.txt
 npm install
 ```
 
-### Autoenv setup
+### Environment variables
 
-The autoenv tool manages environment variables for the project and
+On a Mac, set the following environment variables, either manually or using
+autoenv.
+```
+export SQLALCHEMY_DATABASE_URI="postgresql:///sabelotodo_dev"
+export SQLALCHEMY_TRACK_MODIFICATIONS=False
+export DB_HOST=localhost
+export DB_PORT=5432
+export DB_USER=<your postgres username>
+export DB_DATABASE=sabelotodo_test
+export DB_PASSWORD=<your db password>
+export TEST_DATABASE_URL=postgresql:///sabelotodo_test
+```
+Omit `DB_PASSWORD` if the database is not password-protected.
+
+On Linux, do not set the `DB_HOST` and `DB_PORT` environment variables. Create
+a superuser as the `DB_USER` which matches the username of the user that runs
+the tests.
+
+### Using Autoenv
+
+The Autoenv tool manages environment variables for the project and
 automatically activates the virtual environment when you enter the project
-directory. Install it *outside* the virtual environment.
+directory. It is optional but convenient.
 
+To use it, install it *outside* the virtual environment.
 ```
 deactivate
 pip install autoenv==1.0.0
 ```
-
-Then, add ``source `which activate.sh` `` to your .bashrc or other startup
-file, and rerun that file. Now, when you leave and reenter the directory, the
+Then, add the `export` commands above to a file called `.env`.  Finally, add
+``source `which activate.sh` `` to your .bashrc or other startup file, and
+rerun that file. Now, when you leave and reenter the project directory, the
 virtual environment activates automatically. 
 
 ### Database setup
@@ -59,20 +80,6 @@ Now set up the tables using Alembic.
 python manage.py db upgrade
 ```
 Rerun this last command after changing the models or checking out a new branch.
-
-For testing, a test database is set up automatically using environment variables. You will need to set the following variables or add them to your `.env` file. Password can be left out if your database is not password protected. See Linux instructions below.
-```
-export DB_HOST=localhost
-export DB_PORT=5432
-export DB_USER=<your postgres username>
-export DB_DATABASE=sabelotodo_test
-export DB_PASSWORD=<your db password>
-export TEST_DATABASE_URL=postgresql:///sabelotodo_test
-```
-
-#### Linux
-For testing:
-Do not set the DB_HOST and DB_PORT env variables. Create a superuser as the DB_USER which matches the username of the user that runs the tests.
 
 ## Usage
 
