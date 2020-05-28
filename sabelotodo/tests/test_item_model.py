@@ -15,7 +15,7 @@ items_schema = ItemSchema(many=True)
 def test_create_item(_db, data):
     """ When a new Item is created, the fields are set
     correctly. """
-    item = item_schema.load(data)
+    item = Item(**data)
     for k in data:
         v = getattr(item, k)
         if isinstance(v, datetime):
@@ -28,8 +28,8 @@ def test_create_item(_db, data):
 def test_item_can_be_committed(_db, data):
     """ An item can be added directly to a populated database. """
 
-    populate(_db, items_schema, VALID_ITEM_DATA)
-    item = item_schema.load(data)
+    populate(_db, Item, VALID_ITEM_DATA)
+    item = Item(**data)
 
     before = Item.query.all()
     _db.session.add(item)

@@ -65,7 +65,7 @@ def test_duplicate_username_is_rejected(_db, data):
     """ Adding a user whose username is already in the database raises
     an SQLAlchemy error. Routes will need to test for this to produce
     a friendly http error code instead. """
-    populate(_db, users_schema, VALID_USER_DATA)
+    populate(_db, User, VALID_USER_DATA)
 
     with pytest.raises(IntegrityError):
         new_user = User(**data)

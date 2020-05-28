@@ -2,7 +2,7 @@ import sys
 
 VALID_ITEM_DATA = [{'name': 'minimal', 'order': 0, 'done': False},
                    {'name': 'has_start_date', 'order': 1, 'done': False,
-                       'start_date': 'Sun, 06 Nov 94 08:49:37 -0000'},
+                       'start_date': 'Sun, 06 Nov 1994 08:49:37 -0000'},
                    {'name': 'has_description', 'order': 4, 'done': False,
                        'description': 'Lorem ipsum dolor sit amet.'},
                    {'name': 'already_done', 'order': 8, 'done': True}]
@@ -14,9 +14,9 @@ ADDITIONAL_VALID_ITEM_DATA = [{'name': 'a',
                                'order': 1,
                                'done': False,
                                'description': 'Lorem ipsum dolor sit amet',
-                               'start_date': 'Sun, 05 Apr 20 19:22:13 -0000',
-                               'due_date': 'Mon, 09 Nov 81 19:22:13 -0000',
-                               'end_date': 'Sun, 08 Jun 56 19:22:13 -0000'}]
+                               'start_date': 'Sun, 05 Apr 2020 19:22:13 -0000',
+                               'due_date': 'Mon, 09 Nov 1981 19:22:13 -0000',
+                               'end_date': 'Sun, 08 Jun 1956 19:22:13 -0000'}]
 
 INVALID_ITEM_DATA = [{'name': 'name too long '*100,
                       'order': 57,
@@ -39,7 +39,7 @@ VALID_OVERWRITE_DATA = [{'name': 'name change only'},
                         {'name': 'update that could overwrite a field',
                          'description': None},
                         {'name': 'name and date',
-                         'start_date': 'Tue, 08 Nov 94 08:49:37 -0000'},
+                         'start_date': 'Tue, 08 Nov 1994 08:49:37 -0000'},
                         {'order': 12}]
 
 INVALID_OVERWRITE_DATA = [{'name': None},  # Remove a required field

@@ -14,7 +14,7 @@ items_schema = ItemSchema(many=True)
 def test_item_route_with_multiple_items(test_client, _db):
     """ The /item route retrieves all items added. """
 
-    populate(_db, items_schema, VALID_ITEM_DATA)
+    populate(_db, Item, VALID_ITEM_DATA)
 
     return_value = test_client.get('/item')
     return_dicts = items_schema.loads(return_value.data)
@@ -27,7 +27,7 @@ def test_item_route_with_multiple_items(test_client, _db):
 def test_get_itemid_route_with_valid_id(test_client, _db, idx):
     """ The /item/<id> route retrieves just the item with the specified ID. """
 
-    items = populate(_db, items_schema, VALID_ITEM_DATA)
+    items = populate(_db, Item, VALID_ITEM_DATA)
 
     selection = items[idx]
     return_value = test_client.get('/item/%s' % selection.id)
@@ -58,7 +58,7 @@ def test_delete_itemid_route_with_valid_id(test_client, _db, idx):
     """ A DELETE request to /item/<id> deletes the item with the
     specified ID. """
 
-    items = populate(_db, items_schema, VALID_ITEM_DATA)
+    items = populate(_db, Item, VALID_ITEM_DATA)
 
     selection = items[idx]
     remainder = items[:idx] + items[idx+1:]
@@ -95,7 +95,7 @@ def test_patch_itemid_route_with_valid_id(test_client, _db, idx, overwrite_dict)
     """ A PATCH request to /item/<id> overwrites the specified
     fields of the item with the specified ID. """
 
-    items = populate(_db, items_schema, VALID_ITEM_DATA)
+    items = populate(_db, Item, VALID_ITEM_DATA)
 
     selection = items[idx]
     expected_dict = {**item_schema.dump(selection), **overwrite_dict}
@@ -115,7 +115,7 @@ def test_patch_itemid_route_with_invalid_combinations(test_client, _db, idx, ove
     """ A PATCH request to /item/<id> overwrites the specified
     fields of the item with the specified ID. """
 
-    items = populate(_db, items_schema, VALID_ITEM_DATA)
+    items = populate(_db, Item, VALID_ITEM_DATA)
 
     before = Item.query.all()
     selection = items[idx]
@@ -132,7 +132,7 @@ def test_post_item_route_with_valid_input(test_client, _db, request_dict):
     the JSON payload. We specify _db as a fixture even though we don't use
     it so that the database will be torn down after each run. """
 
-    populate(_db, items_schema, VALID_ITEM_DATA)
+    populate(_db, Item, VALID_ITEM_DATA)
 
     before = Item.query.all()
     return_value = test_client.post('/item', json=request_dict)
@@ -166,7 +166,7 @@ def test_invalid_itemid(test_client, _db, itemid, method):
     integers or that don't correspond to an item in the database, and
     does so for any of the methods we support. """
 
-    populate(_db, items_schema, VALID_ITEM_DATA)
+    populate(_db, Item, VALID_ITEM_DATA)
 
     before = Item.query.all()
     return_value = test_client.open(method=method, path='/item/%s' % itemid)
@@ -181,7 +181,7 @@ def test_invalid_post(test_client, _db, source_dict):
     """ The /item POST route fails with a 400 if you give it JSON that fails in
     various ways to satisfy the ItemSchema schema in models.py. """
 
-    populate(_db, items_schema, VALID_ITEM_DATA)
+    populate(_db, Item, VALID_ITEM_DATA)
 
     before = Item.query.all()
     return_value = test_client.post('/item', json=source_dict)
