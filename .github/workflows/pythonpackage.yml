@@ -52,7 +52,7 @@ jobs:
         DB_PORT: ${{ job.services.postgres.ports[5432] }}
         DB_HOST: localhost
         TEST_DATABASE_NAME: sabelotodo_test
-        TEST_DATABASE_URL: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/sabelotodo_test'
+        TEST_DATABASE_URI: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/sabelotodo_test'
       run: |
         pip install -r requirements-dev.txt
         python -m pytest
