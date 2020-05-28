@@ -2,6 +2,7 @@ import pytest
 from sabelotodo.models import User, UserSchema
 from sqlalchemy.exc import IntegrityError
 from marshmallow.exceptions import ValidationError
+from .helpers import populate
 from .testdata import VALID_USER_DATA, INVALID_USER_DATA
 
 user_schema = UserSchema()
@@ -64,9 +65,7 @@ def test_duplicate_username_is_rejected(_db, data):
     """ Adding a user whose username is already in the database raises
     an SQLAlchemy error. Routes will need to test for this to produce
     a friendly http error code instead. """
-    users = [User(**d) for d in VALID_USER_DATA]
-    _db.session.add_all(users)
-    _db.session.commit()
+    populate(_db, User, VALID_USER_DATA)
 
     with pytest.raises(IntegrityError):
         new_user = User(**data)
@@ -81,4 +80,3 @@ def test_invalid_data_is_rejected(_db, data):
     schema. """
     with pytest.raises(ValidationError):
         user_schema.load(data)
-
