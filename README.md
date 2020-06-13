@@ -33,20 +33,8 @@ pip install -r requirements-dev.txt
 npm install
 ```
 
-### Autoenv setup
-
-The autoenv tool manages environment variables for the project and
-automatically activates the virtual environment when you enter the project
-directory. Install it *outside* the virtual environment.
-
-```
-deactivate
-pip install autoenv==1.0.0
-```
-
-Then, add ``source `which activate.sh` `` to your .bashrc or other startup
-file, and rerun that file. Now, when you leave and reenter the directory, the
-virtual environment activates automatically. 
+If this is your first time installing the project, you must also [create a database](#database-setup) and
+you should read about [environment management](#environment-management).
 
 ### Database setup
 
@@ -60,19 +48,45 @@ python manage.py db upgrade
 ```
 Rerun this last command after changing the models or checking out a new branch.
 
-For testing, a test database is set up automatically using environment variables. You will need to set the following variables or add them to your `.env` file. Password can be left out if your database is not password protected. See Linux instructions below.
-```
-export DB_HOST=localhost
-export DB_PORT=5432
-export DB_USER=<your postgres username>
-export DB_DATABASE=sabelotodo_test
-export DB_PASSWORD=<your db password>
-export TEST_DATABASE_URL=postgresql:///sabelotodo_test
-```
+For testing, a test database is set up automatically. If you want to run tests, you will need to provide the credentials to do this. By default, Alembic will try to set up a 
+test database using the username `postgres`, no password, and no specified port or host. If your setup requires different values, export these environment variables.
 
+
+### Environment management
+
+Project-wide environment variables are set in `.env`. To set them and activate
+the virtual environment by hand, run `source .env`.
+
+Depending on your Postgresql installation, you may also need to export local environment variables.
+By default, Sabelotodo tries to create test databases using the username `postgres`, no password,
+and no specified port or host. To override these defaults, export the following environment variables.
+```
+export TEST_DATABASE_HOST=localhost
+export TEST_DATABASE_PORT=5432
+export TEST_DATABASE_USER=<your postgres username>
+export TEST_DATABASE_PASSWORD=<your db password>
+```
 #### Linux
-For testing:
-Do not set the DB_HOST and DB_PORT env variables. Create a superuser as the DB_USER which matches the username of the user that runs the tests.
+On Linux, do not set the TEST_DATABASE_HOST and TEST_DATABASE_PORT env variables. Create a superuser
+as the TEST_DATABASE_USER which matches the username of the user that runs the tests.
+
+### Autoenv
+
+Optionally, instead of running `source .env` by hand, you can use Autoenv, which will run it
+automatically when you enter the project directory. Deactivate the virtual environment before
+installing it.
+```
+deactivate
+pip install autoenv==1.0.0
+```
+Then, add ``source `which activate.sh` `` to your .bashrc or other startup
+file, and rerun that file. Now, leave and enter the project directory.
+The virtual environment activates automatically, and will do so each time
+you enter the directory.
+
+To deactivate the virtual environment, run `deactivate`.
+
+
 
 ## Usage
 
