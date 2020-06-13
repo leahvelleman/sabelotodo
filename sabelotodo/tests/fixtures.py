@@ -23,10 +23,10 @@ def database(request):
     '''
     Create a Postgres database for the tests, and drop it when the tests are done.
     '''
-    pg_host = os.environ.get('DB_HOST')
-    pg_port = os.environ.get('DB_PORT')
-    pg_user = os.environ.get('DB_USER') or 'postgres'
-    pg_pass = os.environ.get('DB_PASSWORD')
+    pg_host = os.environ.get('TEST_DATABASE_HOST')
+    pg_port = os.environ.get('TEST_DATABASE_PORT')
+    pg_user = os.environ.get('TEST_DATABASE_USER') or 'postgres'
+    pg_pass = os.environ.get('TEST_DATABASE_PASSWORD')
     pg_db = os.environ.get('TEST_DATABASE_NAME')
 
     janitor = DatabaseJanitor(user=pg_user,

@@ -61,14 +61,14 @@ Depending on your Postgresql installation, you may also need to export local env
 By default, Sabelotodo tries to create test databases using the username `postgres`, no password,
 and no specified port or host. To override these defaults, export the following environment variables.
 ```
-export DB_HOST=localhost
-export DB_PORT=5432
-export DB_USER=<your postgres username>
-export DB_PASSWORD=<your db password>
+export TEST_DATABASE_HOST=localhost
+export TEST_DATABASE_PORT=5432
+export TEST_DATABASE_USER=<your postgres username>
+export TEST_DATABASE_PASSWORD=<your db password>
 ```
 #### Linux
-On Linux, do not set the DB_HOST and DB_PORT env variables. Create a superuser
-as the DB_USER which matches the username of the user that runs the tests.
+On Linux, do not set the TEST_DATABASE_HOST and TEST_DATABASE_PORT env variables. Create a superuser
+as the TEST_DATABASE_USER which matches the username of the user that runs the tests.
 
 ### Autoenv
 
