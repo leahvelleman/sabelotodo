@@ -47,10 +47,10 @@ jobs:
         flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
     - name: Test with pytest
       env:
-        DB_USER: postgres
-        DB_PASSWORD: postgres
-        DB_PORT: ${{ job.services.postgres.ports[5432] }}
-        DB_HOST: localhost
+        TEST_DATABASE_USER: postgres
+        TEST_DATABASE_PASSWORD: postgres
+        TEST_DATABASE_PORT: ${{ job.services.postgres.ports[5432] }}
+        TEST_DATABASE_HOST: localhost
         TEST_DATABASE_NAME: sabelotodo_test
         TEST_DATABASE_URI: 'postgres://postgres:postgres@localhost:${{ job.services.postgres.ports[5432] }}/sabelotodo_test'
       run: |
