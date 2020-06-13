@@ -33,8 +33,8 @@ pip install -r requirements-dev.txt
 npm install
 ```
 
-If this is your first time installing the project, you must also create a database and
-you should read about environment management.
+If this is your first time installing the project, you must also [create a database](#database-setup) and
+you should read about [environment management](#environment-management).
 
 ### Database setup
 
@@ -59,13 +59,14 @@ the virtual environment by hand, run `source .env`.
 
 Depending on your Postgresql installation, you may also need to export local environment variables.
 By default, Sabelotodo tries to create test databases using the username `postgres`, no password,
-and no specified port or host. To override these defaults, export these environment variables.
+and no specified port or host. To override these defaults, export the following environment variables.
 ```
 export DB_HOST=localhost
 export DB_PORT=5432
 export DB_USER=<your postgres username>
 export DB_PASSWORD=<your db password>
 ```
+#### Linux
 On Linux, do not set the DB_HOST and DB_PORT env variables. Create a superuser
 as the DB_USER which matches the username of the user that runs the tests.
 
